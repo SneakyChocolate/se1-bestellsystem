@@ -1,6 +1,6 @@
 /**
- * Module {@code se1.play} demonstrates Java project setup, sourcing the project
- * and the project build process for the <i>Software Engineering-I</i> course.
+ * Module {@code se1.bestellsystem} implements a simple order processing system
+ * for the <i>Software Engineering-I</i> course.
  * 
  * The module's main {@link application} package has a simple {@link Runtime} that
  * scans for classes that are assignable from interfaces such as from the
@@ -12,7 +12,7 @@
  * @version <code style=color:green>{@value application.package_info#Version}</code>
  * @author <code style=color:blue>{@value application.package_info#Author}</code>
  */
-module se1.play {
+module se1.bestellsystem {
     opens application;     // open: package is accessible by JavaVM at runtime
     exports application;   // export: package is accessible to compile other modules
 
