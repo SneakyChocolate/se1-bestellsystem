@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Created-By: Software Engineering project
+Main-Class: application.Runtime
+Class-Path: resources \
+    libs/logging/log4j-api-2.23.1.jar
+    libs/logging/log4j-core-2.23.1.jar
+    libs/logging/log4j-slf4j2-impl-2.23.1.jar
+    libs/logging/slf4j-api-2.0.16.jar
+    libs/jackson/jackson-annotations-2.13.0.jar
+    libs/jackson/jackson-core-2.13.0.jar
+    libs/jackson/jackson-databind-2.13.0.jar
