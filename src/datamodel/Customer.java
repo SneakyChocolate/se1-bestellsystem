@@ -57,7 +57,7 @@ public class Customer {
     public int contactsCount() {
         return contacts.size();
     }
-    public Iterable<String> getContact() {
+    public Iterable<String> getContacts() {
         return contacts;
     }
     public Customer addContact(String contact) {

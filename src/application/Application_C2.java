@@ -77,7 +77,10 @@ public class Application_C2 implements Runtime.Runnable {
             .append(", name: ")
             .append(customer.getLastName())
             .append(", ")
-            .append(customer.getFirstName());
+            .append(customer.getFirstName())
+            .append(", contacts: ")
+            .append("[" + String.join(", ", customer.getContacts()) + "]")
+        ;
         return sb.toString();
     }
 
