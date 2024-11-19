@@ -27,9 +27,6 @@ public class Customer {
                 throw new IllegalArgumentException("id is invalid");
             }
         }
-        else {
-            throw new RuntimeException("Id was already assigned");
-        }
         return this;
     }
     public String getFirstName() {
@@ -47,13 +44,13 @@ public class Customer {
         if (name == null) {
             throw new IllegalArgumentException("name must not be null");
         }
-        String[] split = name.split(" ");
-        if (split.length != 2) {
+        int index = name.lastIndexOf(" ");
+        if (index < 0) {
             throw new IllegalArgumentException("name string has wrong size");
         }
         else {
-            firstName = split[0];
-            lastName = split[1];
+            firstName = name.substring(0, index);
+            lastName = name.substring(index);
         }
         return this;
     }
@@ -64,8 +61,11 @@ public class Customer {
         return contacts;
     }
     public Customer addContact(String contact) {
-        if (contact == null || contact.isEmpty() || contacts.contains(contact)) {
+        if (contact == null || contact.isEmpty()) {
             throw new IllegalArgumentException("");
+        }
+        else if(contacts.contains(contact)) {
+            return this;
         }
         contacts.add(contact);
         return this;
