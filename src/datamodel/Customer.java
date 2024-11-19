@@ -1,5 +1,5 @@
 
-package datamodel1;
+package datamodel;
 
 import java.util.LinkedList;
 import java.util.List;
