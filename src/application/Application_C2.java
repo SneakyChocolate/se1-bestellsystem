@@ -62,6 +62,7 @@ public class Application_C2 implements Runtime.Runnable {
         //
         // print customer list
         customers.stream()
+            .sorted((c1, c2) -> c1.getLastName().compareTo(c2.getLastName()))
             .map(c -> print(c))     // .map(this::print)
             .forEach(System.out::println);
     }
