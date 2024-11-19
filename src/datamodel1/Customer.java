@@ -39,8 +39,8 @@ public class Customer {
         return lastName;
     }
     public Customer setName(String first, String last) {
-        firstName = first;
-        lastName = last;
+        if (first != null) firstName = first;
+        if (last != null) lastName = last;
         return this;
     }
     public Customer setName(String name) {
@@ -71,6 +71,9 @@ public class Customer {
         return this;
     }
     public void deleteContact(int i) {
+        if (i < 0 || i > contactsCount()) {
+            return;
+        }
         contacts.remove(i);
     }
     public void deleteAllContacts() {
