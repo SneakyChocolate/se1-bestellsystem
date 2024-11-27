@@ -115,15 +115,24 @@ public class Customer {
 	 *                                  contain a space.
 	 */
 	public Customer setName(String name) {
-		if (name == null) {
-			throw new IllegalArgumentException("name must not be null");
+		if (name.contains(", ")) {
+			var split = name.split(", ");
+			firstName = split[1];
+			lastName = split[0];
+			return this;
 		}
+		
+		if (name == null || name.isBlank()) {
+			throw new IllegalArgumentException("illegal name");
+		}
+		name = name.replaceAll(",", "");
 		int index = name.lastIndexOf(" ");
-		if (index < 0) {
-			throw new IllegalArgumentException("name string has wrong size");
-		} else {
+		if (index > 0) {
 			firstName = name.substring(0, index);
 			lastName = name.substring(index).trim();
+		}
+		else {
+			lastName = name;
 		}
 		return this;
 	}
