@@ -99,6 +99,9 @@ public class Customer {
 	 * @return the current {@code Customer} instance.
 	 */
 	public Customer setName(String first, String last) {
+		if (last.isBlank()) {
+			throw new IllegalArgumentException("last name empty");
+		}
 		if (first != null)
 			firstName = first;
 		if (last != null)
@@ -115,8 +118,17 @@ public class Customer {
 	 *                                  contain a space.
 	 */
 	public Customer setName(String name) {
+		name = name.replaceAll("\"", "");
+		name = name.replaceAll("\t", "");
+		
 		if (name.contains(", ")) {
 			var split = name.split(", ");
+			firstName = split[1];
+			lastName = split[0];
+			return this;
+		}
+		else if (name.contains("; ")) {
+			var split = name.split("; ");
 			firstName = split[1];
 			lastName = split[0];
 			return this;
@@ -125,7 +137,6 @@ public class Customer {
 		if (name == null || name.isBlank()) {
 			throw new IllegalArgumentException("illegal name");
 		}
-		name = name.replaceAll(",", "");
 		int index = name.lastIndexOf(" ");
 		if (index > 0) {
 			firstName = name.substring(0, index);
@@ -162,10 +173,21 @@ public class Customer {
 	 * @return the current {@code Customer} instance.
 	 * @throws IllegalArgumentException if the contact is {@code null} or empty.
 	 */
-	public Customer addContact(String contact) {
+	public Customer addContact(String contactp) {
+		String contact = new String(contactp);
+		contact = contact.replace("\"", "");
+		contact = contact.replace("'", "");
+		contact = contact.replace("\t", "");
+		contact = contact.replace(",", "");
+		contact = contact.replace(";", "");
+		contact = contact.trim();
 		if (contact == null || contact.isEmpty()) {
 			throw new IllegalArgumentException("Contact must not be null or empty");
-		} else if (contacts.contains(contact)) {
+		}
+		else if (contact.length() < 6) {
+			throw new IllegalArgumentException("contact less than 6 characters: \"" + contactp + "\".");
+		}
+		else if (contacts.contains(contact)) {
 			return this;
 		}
 		contacts.add(contact);
