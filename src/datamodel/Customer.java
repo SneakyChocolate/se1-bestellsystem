@@ -1,221 +1,132 @@
 package datamodel;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Represents a customer with an ID, name, and a list of contacts.
+ * Immutable entity class representing a <i>Customer</i>, a person who creates
+ * and holds (owns) orders in the system.
+ * <br>
+ * An <i>immutable</i> class does not allow changes to attributes.
+ * {@link DataFactory} is the only class that creates {@link Customer}
+ * objects from validated arguments.
+ * 
+ * @version <code style=color:green>{@value application.package_info#Version}</code>
+ * @author <code style=color:blue>{@value application.package_info#Author}</code>
  */
-public class Customer {
-	/**
-	 * The unique identifier for the customer. Defaults to -1.
-	 */
-	long id = -1;
+public final class Customer {
 
-	/**
-	 * The first name of the customer. Defaults to an empty string.
-	 */
-	String firstName = "";
+    /**
+     * Unique Customer id attribute. Must be {@code > 0}).
+     */
+    private final long id;
 
-	/**
-	 * The last name of the customer. Defaults to an empty string.
-	 */
-	String lastName = "";
+    /**
+     * Customer surname attribute. Must not be {@code null} and not empty {@code ""}.
+     */
+    private final String lastName;
 
-	/**
-	 * A list of contact information for the customer.
-	 */
-	final List<String> contacts = new LinkedList<>();
+    /**
+     * Customer none-surname parts. Must not be {@code null}, can be empty {@code ""}.
+     */
+    private final String firstName;
 
-	/**
-	 * Default constructor. Initializes an empty customer.
-	 */
-	public Customer() {
-	}
+    /**
+     * Contact information with multiple entries, e.g. email addresses
+     * or phone numbers. The attribute is exposed to {@link DataFactory}
+     * in the same package.
+     */
+    private final List<String> contacts = new ArrayList<>();
 
-	/**
-	 * Constructs a customer with a given full name.
-	 *
-	 * @param name the full name of the customer, where the last name is
-	 *             separated by a space. Must not be {@code null}.
-	 * @throws IllegalArgumentException if the name is {@code null} or does not
-	 *                                  contain a space.
-	 */
-	public Customer(String name) {
-		setName(name);
-	}
-	public Customer(long id, String first, String last) {
-		this.id = id;
-		this.firstName = first;
-		this.lastName = last;
-	}
 
-	/**
-	 * Retrieves the ID of the customer.
-	 *
-	 * @return the customer's ID.
-	 */
-	public long getId() {
-		return id;
-	}
+    /**
+     * None-public constructor used by {@link DataFactory} preventing object
+     * creation outside this package.
+     * @param id customer identifier supplied by {@link DataFactory}
+     * @param firstName first name attribute, must not be {@code null}, can be empty {@code ""}
+     * @param lastName last name attribute, must not be {@code null} and not empty {@code ""}.
+     * @throws IllegalArgumentException if {@code id} is negative, firstName is {@code null}
+     *      or lastName is {@code null} or empty {@code ""}
+     */
+    protected Customer(long id, String firstName, String lastName) {
+        if(id < 0L)
+            throw new IllegalArgumentException("id negative");
+        if(lastName==null || lastName.length()==0)
+            throw new IllegalArgumentException("lastName null or empty");
+        //
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
 
-	/**
-	 * Sets the ID of the customer. The ID can only be set if it has not been
-	 * assigned before.
-	 *
-	 * @param id the new ID to set. Must be non-negative.
-	 * @return the current {@code Customer} instance.
-	 * @throws IllegalArgumentException if the ID is negative or already set.
-	 */
-	public Customer setId(long id) {
-		if (this.id < 0) {
-			if (id >= 0) {
-				this.id = id;
-			} else {
-				throw new IllegalArgumentException("id is invalid");
-			}
-		}
-		return this;
-	}
+    /**
+     * Id attribute getter.
+     * @return customer id
+     */
+    public long getId() {
+        return id;
+    }
 
-	/**
-	 * Retrieves the first name of the customer.
-	 *
-	 * @return the customer's first name.
-	 */
-	public String getFirstName() {
-		return firstName;
-	}
+    /**
+     * LastName attribute getter.
+     * @return value of lastName attribute
+     */
+    public String getLastName() {
+        return lastName;
+    }
 
-	/**
-	 * Retrieves the last name of the customer.
-	 *
-	 * @return the customer's last name.
-	 */
-	public String getLastName() {
-		return lastName;
-	}
+    /**
+     * FirstName attribute getter.
+     * @return value of firstName attribute
+     */
+    public String getFirstName() {
+        return firstName;
+    }
 
-	/**
-	 * Sets the first and last names of the customer.
-	 *
-	 * @param first the first name. Can be {@code null}.
-	 * @param last  the last name. Can be {@code null}.
-	 * @return the current {@code Customer} instance.
-	 */
-	public Customer setName(String first, String last) {
-		if (last.isBlank()) {
-			throw new IllegalArgumentException("last name empty");
-		}
-		if (first != null)
-			firstName = first;
-		if (last != null)
-			lastName = last;
-		return this;
-	}
+    /**
+     * Return the number of contacts.
+     * @return number of contacts
+     */
+    public int contactsCount() {
+        return contacts.size();
+    }
 
-	/**
-	 * Sets the customer's full name by splitting it into first and last names.
-	 *
-	 * @param name the full name. Must not be {@code null} and must contain a space.
-	 * @return the current {@code Customer} instance.
-	 * @throws IllegalArgumentException if the name is {@code null} or does not
-	 *                                  contain a space.
-	 */
-	public Customer setName(String name) {
-		name = name.replaceAll("\"", "");
-		name = name.replaceAll("\t", "");
-		
-		if (name.contains(", ")) {
-			var split = name.split(", ");
-			firstName = split[1];
-			lastName = split[0];
-			return this;
-		}
-		else if (name.contains("; ")) {
-			var split = name.split("; ");
-			firstName = split[1];
-			lastName = split[0];
-			return this;
-		}
-		
-		if (name == null || name.isBlank()) {
-			throw new IllegalArgumentException("illegal name");
-		}
-		int index = name.lastIndexOf(" ");
-		if (index > 0) {
-			firstName = name.substring(0, index);
-			lastName = name.substring(index).trim();
-		}
-		else {
-			lastName = name;
-		}
-		return this;
-	}
+    /**
+     * Contacts getter (as immutable {@link Iterable<String>}).
+     * @return contacts (as immutable {@link Iterable<String>})
+     */
+    public Iterable<String> getContacts() {
+        return contacts;
+    }
 
-	/**
-	 * Retrieves the number of contacts associated with the customer.
-	 *
-	 * @return the count of contacts.
-	 */
-	public int contactsCount() {
-		return contacts.size();
-	}
+    /**
+     * Add new contact validated through {@link DataFactory}. Method has
+     * no effect if contact is not valid.
+     * @param contact contact added validated through {@link DataFactory}
+     * @return chainable self-reference
+     */
+    public Customer addContact(String contact) {
+        DataFactory.getInstance().validateContact(contact)
+            .filter(cont -> ! contacts.contains(contact))
+            .ifPresent(c -> ((List<String>)contacts).add(c));
+        return this;
+    }
 
-	/**
-	 * Retrieves an iterable of the customer's contacts.
-	 *
-	 * @return the customer's contacts.
-	 */
-	public Iterable<String> getContacts() {
-		return contacts;
-	}
+    /**
+     * Delete the i-th contact with {@code i >= 0} and {@code i < contactsCount()}.
+     * Method has no effect for {@code i} outside valid bounds.
+     * @param i index of contact to delete
+     */
+    public void deleteContact(int i) {
+        if( i >= 0 && i < contacts.size() ) {
+            contacts.remove(i);
+        }
+    }
 
-	/**
-	 * Adds a new contact to the customer's list of contacts.
-	 *
-	 * @param contact the contact to add. Must not be {@code null} or empty.
-	 * @return the current {@code Customer} instance.
-	 * @throws IllegalArgumentException if the contact is {@code null} or empty.
-	 */
-	public Customer addContact(String contactp) {
-		String contact = new String(contactp);
-		contact = contact.replace("\"", "");
-		contact = contact.replace("'", "");
-		contact = contact.replace("\t", "");
-		contact = contact.replace(",", "");
-		contact = contact.replace(";", "");
-		contact = contact.trim();
-		if (contact == null || contact.isEmpty()) {
-			throw new IllegalArgumentException("Contact must not be null or empty");
-		}
-		else if (contact.length() < 6) {
-			throw new IllegalArgumentException("contact less than 6 characters: \"" + contactp + "\".");
-		}
-		else if (contacts.contains(contact)) {
-			return this;
-		}
-		contacts.add(contact);
-		return this;
-	}
-
-	/**
-	 * Deletes a contact from the customer's list of contacts by its index.
-	 *
-	 * @param i the index of the contact to delete. If the index is out of bounds,
-	 *          the method does nothing.
-	 */
-	public void deleteContact(int i) {
-		if (i < 0 || i >= contactsCount()) {
-			return;
-		}
-		contacts.remove(i);
-	}
-
-	/**
-	 * Deletes all contacts associated with the customer.
-	 */
-	public void deleteAllContacts() {
-		contacts.clear();
-	}
+    /**
+     * Delete all contacts.
+     */
+    public void deleteAllContacts() {
+        contacts.clear();
+    }
 }

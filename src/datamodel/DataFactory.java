@@ -20,23 +20,23 @@ public class DataFactory {
 	}
 
 	/**
-	 * <i>Factory</i> method to create an object of class {@link Customer2}
+	 * <i>Factory</i> method to create an object of class {@link Customer}
 	 * from validated parameters. The <i>id</i> attribute is internally
 	 * provided. No object is created when arguments are not valid.
 	 * 
 	 * @param name    single-String name parameter
 	 * @param contact contact parameter validated as an email address
 	 *                containing '@' or a phone number, invalid if null or empty
-	 * @return created {@link Customer2} object with valid parameters or empty
+	 * @return created {@link Customer} object with valid parameters or empty
 	 */
-	public Optional<Customer2> createCustomer(String name, String contact) {
+	public Optional<Customer> createCustomer(String name, String contact) {
 		var nameParts = validateSplitName(name);
 		if (nameParts.isPresent()) {
 			long id = customerIdPool.next();
 			var validContact = validateContact(contact);
 			if (validContact.isPresent()) {
 				// only create Customer when all conditions are met
-				Customer2 c = new Customer2(id, nameParts.get().first(), nameParts.get().last());
+				Customer c = new Customer(id, nameParts.get().first(), nameParts.get().last());
 				c.addContact(validContact.get());
 				return Optional.of(c);
 			}
@@ -50,7 +50,7 @@ public class DataFactory {
 	private final Random rand = new Random();
 
 	/**
-	 * {@link IdPool} for {@link Customer2} objects with 6-digit random numbers.
+	 * {@link IdPool} for {@link Customer} objects with 6-digit random numbers.
 	 */
 	private final IdPool<Long> customerIdPool = new IdPool<>(
 		() -> 100000L + rand.nextLong(900000L),

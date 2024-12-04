@@ -1,7 +1,7 @@
 package application;
 
 import application.Runtime.Bean;
-import datamodel.Customer2;
+import datamodel.Customer;
 import datamodel.DataFactory;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import java.util.stream.IntStream;
 
 
 /**
- * Driver class for the <i>c4-customer</i> assignment. Class creates {@link Customer2}
+ * Driver class for the <i>c4-customer</i> assignment. Class creates {@link Customer}
  * objects and prints a customer table.
  * Class implements the {@link Runtime.Runnable} interface.
  * 
@@ -40,7 +40,7 @@ public class Application_C4 implements Runtime.Runnable {
     @Override
     public void run(Properties properties, String[] args) {
         //
-        List<Customer2> customers = List.of(
+        List<Customer> customers = List.of(
             // 
             dataFactory.createCustomer("Eric Meyer", "eric98@yahoo.com")
                 .map(c -> c.addContact("eric98@yahoo.com").addContact("(030) 3945-642298")),
@@ -119,7 +119,7 @@ public class Application_C4 implements Runtime.Runnable {
      * @return Customer name formatted according to the selcted style
      * @throws IllegalArgumentException with null arguments
      */
-    public String fmtCustomerName(Customer2 customer, int... style) {
+    public String fmtCustomerName(Customer customer, int... style) {
         if(customer==null)
             throw new IllegalArgumentException("argument customer: null");
         //
@@ -154,7 +154,7 @@ public class Application_C4 implements Runtime.Runnable {
      * @param style name formatting style
      * @return Customer contact information formatted according to the selcted style
      */
-    public String fmtCustomerContacts(Customer2 customer, int... style) {
+    public String fmtCustomerContacts(Customer customer, int... style) {
         if(customer==null)
             throw new IllegalArgumentException("argument customer: null");
         //
