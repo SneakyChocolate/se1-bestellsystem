@@ -1,5 +1,6 @@
 package datamodel;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -7,7 +8,6 @@ import org.junit.jupiter.api.TestMethodOrder;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.stream.StreamSupport;
 
@@ -18,114 +18,142 @@ import java.util.stream.StreamSupport;
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class Customer_400_Contacts_Tests {
-    //
-    private final Customer c1 = new Customer();
 
+    /*
+     * Test object.
+     */
+    private Customer c1;
+
+    private final String c1FirstName = "Eric";
+    private final String c1LastName = "Meyer";
+    private final String c1FirstLastName = c1FirstName + " " + c1LastName;
+    private final String c1Contact = "eric98@yahoo.com";
+
+    /**
+     * Method is executed before each @Test method
+     * @throws Exception if any exception occurs
+     */
+    @BeforeEach
+    public void setUpBeforeEach() throws Exception {
+        // System.out.println("setUpBeforeEach() runs before each @Test method");
+
+        DataFactory dataFactory = DataFactory.getInstance();
+        var c = dataFactory.createCustomer(c1FirstLastName, c1Contact);
+        if(c.isPresent()) {
+            c1 = c.get();
+        } else {
+            throw new IllegalAccessException("could not create test object from valid parameters");
+        }
+    }
 
     /*
      * Test cases 400: add contacts.
      */
     @Test @Order(400)
     void test400_addContactsRegularCases() {
-        assertEquals(0, c1.contactsCount());
-        c1.addContact("eric@gmail.com");
         assertEquals(1, c1.contactsCount());
+        c1.addContact("eric@gmail.com");
+        assertEquals(2, c1.contactsCount());
         assertArrayEquals(new String[] {
-            "eric@gmail.com"
+            c1Contact, "eric@gmail.com"
         }, contacts(c1));
         c1.addContact("(0152) 38230529");
-        assertEquals(2, c1.contactsCount());
-        assertArrayEquals(new String[] {    // must maintain order
-            "eric@gmail.com", "(0152) 38230529"
-        }, contacts(c1));
-        c1.addContact("(030) 3534346-6336");
         assertEquals(3, c1.contactsCount());
         assertArrayEquals(new String[] {    // must maintain order
-            "eric@gmail.com", "(0152) 38230529", "(030) 3534346-6336"
+            c1Contact, "eric@gmail.com", "(0152) 38230529"
+        }, contacts(c1));
+        c1.addContact("(030) 3534346-6336");
+        assertEquals(4, c1.contactsCount());
+        assertArrayEquals(new String[] {    // must maintain order
+            c1Contact, "eric@gmail.com", "(0152) 38230529", "(030) 3534346-6336"
         }, contacts(c1));
     }
 
     @Test @Order(401)
     void test401_addContactsCornerCases() {
-        assertEquals(0, c1.contactsCount());
+        assertEquals(1, c1.contactsCount());
         // test leading and trailing spaces are trimmed
         c1.addContact(" eric@gmail.com  ");
-        assertEquals(1, c1.contactsCount());
+        assertEquals(2, c1.contactsCount());
         assertArrayEquals(new String[] {
-            "eric@gmail.com"
+            c1Contact, "eric@gmail.com"
         }, contacts(c1));
         // test more leading and trailing white spaces are trimmed
         c1.addContact("\t(0152) 38230529\t \n\t");
-        assertEquals(2, c1.contactsCount());
+        assertEquals(3, c1.contactsCount());
         assertArrayEquals(new String[] {
-            "eric@gmail.com", "(0152) 38230529"
+            c1Contact, "eric@gmail.com", "(0152) 38230529"
         }, contacts(c1));
     }
 
     @Test @Order(402)
     void test402_addContactsCornerCases() {
-        assertEquals(0, c1.contactsCount());
+        assertEquals(1, c1.contactsCount());
         // test leading and trailing spaces are trimmed
         c1.addContact("\"eric@gmail.com\"");
-        assertEquals(1, c1.contactsCount());
+        assertEquals(2, c1.contactsCount());
         assertArrayEquals(new String[] {
-            "eric@gmail.com"
+            c1Contact, "eric@gmail.com"
         }, contacts(c1));
         // test more leading and trailing white spaces are trimmed
         c1.addContact("\" \"'\"(0152) 38230529';'\" ,\t\n\"");
-        assertEquals(2, c1.contactsCount());    // test special chars: quotes["'] and [;,.]
+        assertEquals(3, c1.contactsCount());    // test special chars: quotes["'] and [;,.]
         assertArrayEquals(new String[] {
-            "eric@gmail.com", "(0152) 38230529"
+            c1Contact, "eric@gmail.com", "(0152) 38230529"
         }, contacts(c1));
     }
 
     @Test @Order(403)
     void test403_addContactsMinimumLength() {
-        assertEquals(0, c1.contactsCount());
-        c1.addContact("e@gm.c");    // minimum length for meaningful contact is 6 characters
         assertEquals(1, c1.contactsCount());
+        c1.addContact("e@gm.c");    // minimum length for meaningful contact is 6 characters
+        assertEquals(2, c1.contactsCount());
         assertArrayEquals(new String[] {
-            "e@gm.c"
+            c1Contact, "e@gm.c"
         }, contacts(c1));
         //
-        final String contact = "e@g.c";     // contact < 6 characters as contact is illegal
-        IllegalArgumentException thrown =
-            assertThrows(
-                IllegalArgumentException.class, () -> {
-                    c1.addContact(contact);
-        });
-        // test for correct error message
-        assertEquals("contact less than 6 characters: \"" + contact +
-                "\".", thrown.getMessage());
+        final String contact = "e@g.c";     // contact < 6 characters as contact is not legal
+        int count = c1.contactsCount();
+        c1.addContact(contact);
+        assertEquals(count, c1.contactsCount());    // count unchanged
+        assertArrayEquals(new String[] {            // contacts unchanged
+            c1Contact, "e@gm.c"
+        }, contacts(c1));
+        // IllegalArgumentException thrown =        // prior: threw IllegalArgumentException
+        //     assertThrows(
+        //         IllegalArgumentException.class, () -> {
+        //             c1.addContact(contact);
+        // });
+        // // test for correct error message
+        // assertEquals("invalid contact: \"" + contact + "\"", thrown.getMessage());
         //
         final String contact2 = "\"  e@g.c \t\"";   // input > 6, but not after trimming
-        thrown = assertThrows(
-            IllegalArgumentException.class, () -> {
-                c1.addContact(contact2);
-        });
-        // test for correct error message
-        assertEquals("contact less than 6 characters: \"" + contact2 +
-                "\".", thrown.getMessage());
+        count = c1.contactsCount();
+        c1.addContact(contact2);
+        assertEquals(count, c1.contactsCount());    // count unchanged
+        assertArrayEquals(new String[] {            // contacts unchanged
+            c1Contact, "e@gm.c"
+        }, contacts(c1));
     }
 
     @Test @Order(404)
     void test404_addContactsIgnoreDuplicates() {
         // duplicate entries for contacts are ignored
-        assertEquals(0, c1.contactsCount());
-        c1.addContact("eric@gmail.com");
         assertEquals(1, c1.contactsCount());
+        c1.addContact("eric@gmail.com");
+        assertEquals(2, c1.contactsCount());
         assertArrayEquals(new String[] {
-            "eric@gmail.com"
+            c1Contact, "eric@gmail.com"
         }, contacts(c1));
         c1.addContact("eric@gmail.com");    // duplicate contact
-        assertEquals(1, c1.contactsCount());
+        assertEquals(2, c1.contactsCount());
         assertArrayEquals(new String[] {
-            "eric@gmail.com"                        // +1 duplicate contact
+            c1Contact, "eric@gmail.com"                        // +1 duplicate contact
         }, contacts(c1));
         c1.addContact("eric@gmail.com");    // +2 duplicate contact
-        assertEquals(1, c1.contactsCount());        // ignored
+        assertEquals(2, c1.contactsCount());        // ignored
         assertArrayEquals(new String[] {
-            "eric@gmail.com"
+            c1Contact, "eric@gmail.com"
         }, contacts(c1));
     }
 
@@ -138,19 +166,19 @@ class Customer_400_Contacts_Tests {
         c1.addContact("eric@gmail.com")
             .addContact("(0152) 38230529")
             .addContact("(030) 3534346-6336");
-        assertEquals(3, c1.contactsCount());
+        assertEquals(4, c1.contactsCount());
         assertArrayEquals(new String[] {    // must maintain order
-            "eric@gmail.com", "(0152) 38230529", "(030) 3534346-6336"
+            c1Contact, "eric@gmail.com", "(0152) 38230529", "(030) 3534346-6336"
         }, contacts(c1));
-        c1.deleteContact(2);    // delete last contact
+        c1.deleteContact(3);    // delete last contact
+        assertEquals(3, c1.contactsCount());
+        assertArrayEquals(new String[] {
+            c1Contact, "eric@gmail.com", "(0152) 38230529"
+        }, contacts(c1));
+        c1.deleteContact(0);    // delete first contact
         assertEquals(2, c1.contactsCount());
         assertArrayEquals(new String[] {
             "eric@gmail.com", "(0152) 38230529"
-        }, contacts(c1));
-        c1.deleteContact(0);    // delete first contact
-        assertEquals(1, c1.contactsCount());
-        assertArrayEquals(new String[] {
-            "(0152) 38230529"
         }, contacts(c1));
     }
 
@@ -159,18 +187,18 @@ class Customer_400_Contacts_Tests {
         c1.addContact("eric@gmail.com")
             .addContact("(0152) 38230529")
             .addContact("(030) 3534346-6336");
-        assertEquals(3, c1.contactsCount());
+        assertEquals(4, c1.contactsCount());
         assertArrayEquals(new String[] {        // must maintain order
-            "eric@gmail.com", "(0152) 38230529", "(030) 3534346-6336"
+            c1Contact, "eric@gmail.com", "(0152) 38230529", "(030) 3534346-6336"
         }, contacts(c1));
         c1.deleteContact(300);    // delete > upper bound, ignore
         c1.deleteContact(3);
-        assertEquals(3, c1.contactsCount());    // still 3 contacts
+        assertEquals(3, c1.contactsCount());    // 3 contacts
         c1.deleteContact(-1);       // delete < upper bound, ignore
         c1.deleteContact(-100);
         assertEquals(3, c1.contactsCount());    // still 3 contacts
         assertArrayEquals(new String[] {        // must maintain order
-            "eric@gmail.com", "(0152) 38230529", "(030) 3534346-6336"
+            c1Contact, "eric@gmail.com", "(0152) 38230529"
         }, contacts(c1));
     }
 

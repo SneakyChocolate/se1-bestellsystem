@@ -44,6 +44,11 @@ public class Customer {
 	public Customer(String name) {
 		setName(name);
 	}
+	public Customer(long id, String first, String last) {
+		this.id = id;
+		this.firstName = first;
+		this.lastName = last;
+	}
 
 	/**
 	 * Retrieves the ID of the customer.
