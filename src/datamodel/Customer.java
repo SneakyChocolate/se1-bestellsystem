@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Immutable entity class representing a <i>Customer</i>, a person who creates
+ * Immutable entity class representing a <i>Customer2</i>, a person who creates
  * and holds (owns) orders in the system.
  * <br>
  * An <i>immutable</i> class does not allow changes to attributes.
@@ -17,17 +17,17 @@ import java.util.List;
 public final class Customer {
 
     /**
-     * Unique Customer id attribute. Must be {@code > 0}).
+     * Unique Customer2 id attribute. Must be {@code > 0}).
      */
     private final long id;
 
     /**
-     * Customer surname attribute. Must not be {@code null} and not empty {@code ""}.
+     * Customer2 surname attribute. Must not be {@code null} and not empty {@code ""}.
      */
     private final String lastName;
 
     /**
-     * Customer none-surname parts. Must not be {@code null}, can be empty {@code ""}.
+     * Customer2 none-surname parts. Must not be {@code null}, can be empty {@code ""}.
      */
     private final String firstName;
 
