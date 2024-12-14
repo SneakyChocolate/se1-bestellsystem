@@ -101,7 +101,10 @@ public class Pricing {
 	@Getter
 	@AllArgsConstructor
 	public enum Country {
-		Germany(Currency.Euro);
+		Germany(Currency.Euro),
+		Swiss(Currency.SwissFranc),
+		UK(Currency.PoundSterling),
+		;
 
 		private final Currency currency;
 		public Currency currency() {
@@ -118,7 +121,10 @@ public class Pricing {
 	@Getter
 	@AllArgsConstructor
 	public enum Currency {
-		Euro("EUR", "\u20AC");
+		Euro("EUR", "\u20AC"),
+		SwissFranc("CHF", "\u20A3"),
+		PoundSterling("GBP", "\u20A5"),
+		;
 
 		private final String code;
 		private final String unicode;
