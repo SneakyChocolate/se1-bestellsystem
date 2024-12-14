@@ -9,6 +9,7 @@ import java.util.List;
 public class Order {
 	private final long id;
 	private final Customer customer;
+	// TODO Pricing class here
 	private final double pricing;
 	private final LocalDateTime created;
 	private final List<OrderItem> orderItems;
