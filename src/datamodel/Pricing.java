@@ -43,6 +43,7 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 @Getter
 public class Pricing {
+	private final double[] taxRateValues;
 
 	/**
 	 * Enum of pricing categories
@@ -50,7 +51,11 @@ public class Pricing {
 	@Getter
 	public enum PricingCategory {
 		/** regular prices in Germany */
-		BasePricing(Country.Germany);
+		BasePricing(Country.Germany),
+		SwissPricing(Country.Swiss),
+		UKPricing(Country.UK),
+		BlackFridayPricing(Country.Germany),
+		;
 
 		private final Country country;
 		private final Pricing pricing;
@@ -156,6 +161,7 @@ public class Pricing {
 	 * Currency associated with this {@link Pricing} instance.
 	 */
 	private final Currency currency;
+	private final PricingCategory category;
 
 	/**
 	 * Private constructor.
@@ -165,6 +171,22 @@ public class Pricing {
 	private Pricing(Country country) {
 		this.country = country;
 		this.currency = country.currency();
+		// TODO category
+		this.category = null;
+		switch (country) {
+			case Germany:
+				this.taxRateValues = new double[]{0.19,0.07,0,0};
+				break;
+			case Swiss:
+				this.taxRateValues = new double[]{0.081,0.026,0.038,0};
+				break;
+			case UK:
+				this.taxRateValues = new double[]{0.2,0.05,0,0};
+				break;
+			default:
+				this.taxRateValues = new double[]{0,0,0,0};
+				break;
+		}
 	}
 
 	/**

@@ -1,13 +1,18 @@
 package datamodel;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
+
+import datamodel.Pricing.PricingCategory;
+import datamodel.Pricing.TAXRate;
 
 /**
  * DataFactory
@@ -309,5 +314,106 @@ public class DataFactory {
 		s = s.replaceAll("[\\s\"',;]*$", ""); // trim trailing white spaces[\s], commata[,;] and quotes['"]
 		s = s.replaceAll("[\\s]+", " "); // remove white spaces sequences, "Eric Meyer" -> "Eric Meyer"
 		return s;
+	}
+
+	// aufgabe d1
+	/*
+	 * {@link IdPool} for {@link Article} objects with 6-digit numbers prefixed
+	 * with "SKU-" (stock-keeping unit).
+	 */
+	private IdPool<String> articleIdPool = new IdPool<>(
+	    () -> String.format("SKU-%d", 100000 + rand.nextInt(900000)),
+	    Arrays.asList(  // initial Article ids
+	        "SKU-458362", "SKU-693856", "SKU-518957", "SKU-638035", "SKU-278530",
+	        "SKU-425378", "SKU-300926", "SKU-663942", "SKU-583978"
+	    )
+	);
+
+	/*
+	 * {@link IdPool} for {@link Customer} objects with 10-digit random numbers.
+	 */
+	private IdPool<Long> orderIdPool = new IdPool<>(
+	    () -> 1000000000L + rand.nextLong(9000000000L),
+	    Arrays.asList(  // initial Order ids
+	        8592356245L, 3563561357L, 5234968294L, 6135735635L, 6173043537L,
+	        7372561535L, 4450305661L
+	    )
+	);
+
+	/**
+	 * <i>Factory</i> method to create an object of class {@link Article}
+	 * from validated arguments. The <i>id</i> attribute is internally
+	 * provided. No object is created when arguments are not valid.
+	 * @param description brief article description, e.g. "Tasse"
+	 * @param unitPrice price of one unit (in cent)
+	 * @param pricingCategory pricing table associated with this article
+	 * @param taxRate rate according to {@link TAXRate} ({@code TAXRate.Regular} is default)
+	 * @return {@link Article} object created from valid arguments or empty
+	 */
+	public Optional<Article> createArticle(
+	    String description,
+	    long unitPrice,
+	    PricingCategory pricingCategory,
+	    TAXRate... taxRate
+	) {
+		// TODO
+		return null;
+	}
+
+	/**
+	 * <i>Factory</i> method to create an object of class {@link Order}
+	 * from validated arguments. The <i>id</i> attribute is internally
+	 * provided. No object is created when arguments are not valid.
+	 * @param customer owner of the order (foreign-key relaion)
+	 * @param orderConsumer accessor function called on the created object
+	 * @return {@link Order} object created from valid arguments or empty
+	 */
+	public Optional<Order> createOrder(
+	    Optional<Customer> customer,
+	    Consumer<Order> orderConsumer)
+	{
+		// TODO
+	    // return createOrder(PricingCategory.BasePricing, customer, order);
+	    return null;
+	}
+
+	/**
+	 * <i>Factory</i> method to create an object of class {@link Order}
+	 * from validated arguments. The <i>id</i> attribute is internally
+	 * provided. No object is created when arguments are not valid.
+	 * @param category pricing category that applies to {@link Order}
+	 * @param customer owner of the order (foreign-key relaion)
+	 * @param orderConsumer accessor function called on the created object
+	 * @return {@link Order} object created from valid arguments or empty
+	 */
+	public Optional<Order> createOrder(
+	    PricingCategory category,
+	    Optional<Customer> customer,
+	    Consumer<Order> orderConsumer
+	) {
+		// TODO
+		return null;
+	}
+
+	/*
+	 * Lower bound of valid order creation date: {@code "Jan 01, 2020 00:00:00"}
+	 */
+	private final LocalDateTime lowerOrderCreationDate = LocalDateTime.of(2020,1,1,0,0,0);
+
+	/*
+	 * Upper bound of valid order creation date: {@code "Dec 31, 2099 23:59:59"}
+	 */
+	private final LocalDateTime upperOrderCreationDate = LocalDateTime.of(2099,12,31,23,59,59);
+
+	/**
+	 * Validate order creation date against bounds {@link lowerOrderCreationDate}
+	 * ({@code "Jan 01, 2020 00:00"}) and {@link upperOrderCreationDate}
+	 * ({@code "Dec 31, 2099 23:59"}).
+	 * @param date date to validate
+	 * @return validated date or empty result
+	 */
+	public Optional<LocalDateTime> validateOrderCreationDate(LocalDateTime date) {
+		// TODO
+		return null;
 	}
 }
