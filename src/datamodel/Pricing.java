@@ -139,6 +139,12 @@ public class Pricing {
 
 		private final String code;
 		private final String unicode;
+		public String code() {
+			return code;
+		}
+		public String unicode() {
+			return unicode;
+		}
 		Currency(String code, String unicode) {
 			this.code = code;
 			this.unicode = unicode;
@@ -157,6 +163,9 @@ public class Pricing {
 	 */
 	@Getter(AccessLevel.NONE)
 	private final Map<Article, PriceRecord> articlePriceMap = new HashMap<>();
+	public Map<Article, PriceRecord> articlePriceMap() {
+		return articlePriceMap;
+	};
 
 	/**
 	 * Country of this {@link Pricing} instance.
@@ -169,6 +178,15 @@ public class Pricing {
 	private final Currency currency;
 	private final PricingCategory category;
 
+	public Country country() {
+		return country;
+	}
+	public Currency currency() {
+		return currency;
+	}
+	public PricingCategory category() {
+		return category;
+	}
 	/**
 	 * Private constructor.
 	 * 
