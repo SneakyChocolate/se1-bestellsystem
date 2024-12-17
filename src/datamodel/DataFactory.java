@@ -351,14 +351,24 @@ public class DataFactory {
 	 * @return {@link Article} object created from valid arguments or empty
 	 */
 	public Optional<Article> createArticle(
-	    String description,
-	    long unitPrice,
-	    PricingCategory pricingCategory,
-	    TAXRate... taxRate
-	) {
-		// TODO
-		return null;
-	}
+        String description,
+        long unitPrice,
+        PricingCategory pricingCategory,
+        TAXRate... taxRate
+    ) {
+        TAXRate tax_rate = taxRate.length > 0? taxRate[0] : TAXRate.Regular;
+        boolean valid = description != null && description.length() > 0;
+        valid = valid && pricingCategory != null && tax_rate != null;
+        valid = valid && unitPrice >= 0L;
+        if(valid) {
+            String id = articleIdPool.next();
+            Article article = new Article(id, description);
+            var pricing = pricingCategory.pricing();
+            pricing.put(article, unitPrice, tax_rate);
+            return Optional.of(article);
+        }
+        return Optional.empty();
+    }
 
 	/**
 	 * <i>Factory</i> method to create an object of class {@link Order}
@@ -369,13 +379,11 @@ public class DataFactory {
 	 * @return {@link Order} object created from valid arguments or empty
 	 */
 	public Optional<Order> createOrder(
-	    Optional<Customer> customer,
-	    Consumer<Order> orderConsumer)
-	{
-		// TODO
-	    // return createOrder(PricingCategory.BasePricing, customer, order);
-	    return null;
-	}
+        Optional<Customer> customer,
+        Consumer<Order> orderConsumer)
+    {
+        return createOrder(PricingCategory.BasePricing, customer, orderConsumer);
+    }
 
 	/**
 	 * <i>Factory</i> method to create an object of class {@link Order}
@@ -387,13 +395,26 @@ public class DataFactory {
 	 * @return {@link Order} object created from valid arguments or empty
 	 */
 	public Optional<Order> createOrder(
-	    PricingCategory category,
-	    Optional<Customer> customer,
-	    Consumer<Order> orderConsumer
-	) {
-		// TODO
-		return null;
-	}
+        PricingCategory category,
+        Optional<Customer> customer,
+        Consumer<Order> orderConsumer
+    ) {
+        if(category==null)
+            throw new IllegalArgumentException("argument category: null");
+        if(customer==null)
+            throw new IllegalArgumentException("argument customer: null");
+        //
+        if(customer.isPresent()) {
+            LocalDateTime created = LocalDateTime.now();
+            var order = new Order(orderIdPool.next(), customer.get(), category.pricing(), created);
+            if(orderConsumer != null) {
+                orderConsumer.accept(order);
+            }
+            return Optional.of(order);
+        } else {
+            return Optional.empty();
+        }
+    }
 
 	/*
 	 * Lower bound of valid order creation date: {@code "Jan 01, 2020 00:00:00"}
@@ -413,7 +434,14 @@ public class DataFactory {
 	 * @return validated date or empty result
 	 */
 	public Optional<LocalDateTime> validateOrderCreationDate(LocalDateTime date) {
-		// TODO
-		return null;
-	}
+        if(date != null) {
+            boolean valid = date.isAfter(lowerOrderCreationDate) && date.isBefore(upperOrderCreationDate);
+            // second test to match bounds is only performed when first test was invalid
+            valid = valid || date.isEqual(lowerOrderCreationDate) || date.isEqual(upperOrderCreationDate);
+            if(valid) {
+                return Optional.of(date);
+            }
+        }
+        return Optional.empty();
+    }
 }

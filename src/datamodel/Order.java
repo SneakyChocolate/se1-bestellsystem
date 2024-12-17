@@ -1,6 +1,7 @@
 package datamodel;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -9,17 +10,16 @@ import java.util.List;
 public class Order {
 	private final long id;
 	private final Customer customer;
-	// TODO Pricing class here
-	private final double pricing;
+	private final Pricing pricing;
 	private final LocalDateTime created;
 	private final List<OrderItem> orderItems;
 
-	public Order(long id, Customer customer, double pricing, LocalDateTime created, List<OrderItem> orderItems) {
+	public Order(long id, Customer customer, Pricing pricing, LocalDateTime created) {
 		this.id = id;
 		this.customer = customer;
 		this.pricing = pricing;
 		this.created = created;
-		this.orderItems = orderItems;
+		this.orderItems = new ArrayList<>();
 	}
 
 	// getter
@@ -29,7 +29,7 @@ public class Order {
 	public Customer get_customer() {
 		return customer;
 	}
-	public double get_pricing() {
+	public Pricing get_pricing() {
 		return pricing;
 	}
 	public LocalDateTime get_created() {

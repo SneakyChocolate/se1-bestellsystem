@@ -59,6 +59,12 @@ public class Pricing {
 
 		private final Country country;
 		private final Pricing pricing;
+		public Country country() {
+			return country;
+		}
+		public Pricing pricing() {
+			return pricing;
+		}
 
 		PricingCategory(Country country) {
 			this.country = country;
