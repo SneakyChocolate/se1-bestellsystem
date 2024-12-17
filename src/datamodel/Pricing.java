@@ -222,9 +222,19 @@ public class Pricing {
 	 * @param taxRate   tax rate applicable to {@link Article}
 	 * @return chainable self-reference
 	 */
-	public Pricing put(Article article, long unitPrice, TAXRate taxRate) {
-		var priceRecord = new PriceRecord(unitPrice, taxRate);
-		articlePriceMap.put(article, priceRecord);
+	public Pricing put(Article article, long unitPrice, TAXRate taxRate, PricingCategory pricingCategory) {
+		switch (pricingCategory) {
+			case BasePricing:
+				PricingCategory.BasePricing.pricing().articlePriceMap.put(article, new PriceRecord(unitPrice, taxRate));
+				PricingCategory.BlackFridayPricing.pricing().articlePriceMap.put(article, new PriceRecord(adjustPrice(unitPrice, 0.8), taxRate));
+				PricingCategory.SwissPricing.pricing().articlePriceMap.put(article, new PriceRecord(adjustPrice(unitPrice, 1.8), taxRate));
+				PricingCategory.UKPricing.pricing().articlePriceMap.put(article, new PriceRecord(adjustPrice(unitPrice, 1.15), taxRate));
+				break;
+			default:
+				var priceRecord = new PriceRecord(unitPrice, taxRate);
+				articlePriceMap.put(article, priceRecord);
+				break;
+		}
 		return this;
 	}
 
@@ -236,7 +246,7 @@ public class Pricing {
 	 */
 	public long unitPrice(Article article) {
 		return Optional.ofNullable(articlePriceMap.get(article))
-				.map(p -> p.unitPrice).orElse(0L);
+			.map(p -> p.unitPrice).orElse(0L);
 	}
 
 	/**

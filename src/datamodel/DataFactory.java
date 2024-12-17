@@ -364,7 +364,7 @@ public class DataFactory {
             String id = articleIdPool.next();
             Article article = new Article(id, description);
             var pricing = pricingCategory.pricing();
-            pricing.put(article, unitPrice, tax_rate);
+            pricing.put(article, unitPrice, tax_rate, pricingCategory);
             return Optional.of(article);
         }
         return Optional.empty();
