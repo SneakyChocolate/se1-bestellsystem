@@ -68,7 +68,7 @@ public class Pricing {
 
 		PricingCategory(Country country) {
 			this.country = country;
-			this.pricing = new Pricing(country);
+			this.pricing = new Pricing(country, this);
 		}
 	}
 
@@ -192,20 +192,22 @@ public class Pricing {
 	 * 
 	 * @param country {@link Country} associated with this instance
 	 */
-	private Pricing(Country country) {
+	private Pricing(Country country, PricingCategory pricingCategory) {
 		this.country = country;
 		this.currency = country.currency();
-		// TODO category
-		this.category = null;
-		switch (country) {
-			case Germany:
-				this.taxRateValues = new double[]{0.19,0.07,0,0};
+		this.category = pricingCategory;
+		switch (pricingCategory) {
+			case BasePricing:
+				this.taxRateValues = new double[]{19,7,0,0};
 				break;
-			case Swiss:
-				this.taxRateValues = new double[]{0.081,0.026,0.038,0};
+			case SwissPricing:
+				this.taxRateValues = new double[]{8.1,2.6,3.8,0};
 				break;
-			case UK:
-				this.taxRateValues = new double[]{0.2,0.05,0,0};
+			case UKPricing:
+				this.taxRateValues = new double[]{20,5,0,0};
+				break;
+			case BlackFridayPricing:
+				this.taxRateValues = new double[]{19,7,0,0};
 				break;
 			default:
 				this.taxRateValues = new double[]{0,0,0,0};
@@ -271,9 +273,13 @@ public class Pricing {
 		var taxRate = taxRate(article);
 		switch (taxRate) {
 			case Regular:
-				return 19.0;
+				return taxRateValues[0];
 			case Reduced:
-				return 7.0;
+				return taxRateValues[1];
+			case Special:
+				return taxRateValues[2];
+			case Excempt:
+				return taxRateValues[3];
 			default:
 				return 0.0;
 		}
