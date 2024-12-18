@@ -22,15 +22,25 @@ public class Article_100_FactoryCreate_Tests {
         assertFalse(optional.isEmpty());
         var article = optional.get();
         assertEquals(article.getDescription(), "Laptop");
+    }
 
-        var optionalSecond = factory.createArticle("Sneaker", 9999, BasePricing, TAXRate.Regular);
-        assertFalse(optionalSecond.isEmpty());
-        var articleSecond = optionalSecond.get();
+    @Test
+    @Order(100)
+    public void test101_RegularArticleCreation() {
+        DataFactory factory = DataFactory.getInstance();
+        var optional = factory.createArticle("Sneaker", 9999, BasePricing, TAXRate.Regular);
+        assertFalse(optional.isEmpty());
+        var articleSecond = optional.get();
         assertEquals(articleSecond.getDescription(), "Sneaker");
+    }
 
-        var optionalThird = factory.createArticle("Butter", 239, BasePricing, TAXRate.Reduced);
-        assertFalse(optionalThird.isEmpty());
-        var articleThird = optionalThird.get();
+    @Test
+    @Order(100)
+    public void test102_RegularArticleCreation() {
+        DataFactory factory = DataFactory.getInstance();
+        var optional = factory.createArticle("Butter", 239, BasePricing, TAXRate.Reduced);
+        assertFalse(optional.isEmpty());
+        var articleThird = optional.get();
         assertEquals(articleThird.getDescription(), "Butter");
     }
 
@@ -43,14 +53,24 @@ public class Article_100_FactoryCreate_Tests {
         var article = optional.get();
         assertEquals(article.getDescription(), "X");
 
-        var optionalSecond = factory.createArticle("X", 000, BasePricing, TAXRate.Regular);
-        assertFalse(optionalSecond.isEmpty());
-        var articleSecond = optionalSecond.get();
-        assertEquals(articleSecond.getDescription(), "X");
 
-        var optionalThird = factory.createArticle("Blaue Wintermütze passend zum hellgrünen Pullover", 999999999, BasePricing, TAXRate.Regular);
-        assertFalse(optionalThird.isEmpty());
-        var articleThird = optionalThird.get();
+    }
+    @Test
+    @Order(110)
+    public void test111_ArticleCreationCornerCases() {
+        DataFactory factory = DataFactory.getInstance();
+        var optional = factory.createArticle("X", 000, BasePricing, TAXRate.Regular);
+        assertFalse(optional.isEmpty());
+        var articleSecond = optional.get();
+        assertEquals(articleSecond.getDescription(), "X");
+    }
+    @Test
+    @Order(110)
+    public void test112_ArticleCreationCornerCases() {
+        DataFactory factory = DataFactory.getInstance();
+        var optional = factory.createArticle("Blaue Wintermütze passend zum hellgrünen Pullover", 999999999, BasePricing, TAXRate.Regular);
+        assertFalse(optional.isEmpty());
+        var articleThird = optional.get();
         assertEquals(articleThird.getDescription(), "Blaue Wintermütze passend zum hellgrünen Pullover");
     }
 
@@ -60,22 +80,42 @@ public class Article_100_FactoryCreate_Tests {
         DataFactory factory = DataFactory.getInstance();
         var optional = factory.createArticle("", 100, BasePricing, TAXRate.Regular);
         assertTrue(optional.isEmpty());
-
-        var secondOptional = factory.createArticle(null, 100, BasePricing, TAXRate.Regular);
-        assertTrue(secondOptional.isEmpty());
-
-        var thridOptional = factory.createArticle("Hut", -001, BasePricing, TAXRate.Regular);
-        assertTrue(thridOptional.isEmpty());
-
-        var fourthOptional = factory.createArticle("Hut", -10000, BasePricing, TAXRate.Regular);
-        assertTrue(fourthOptional.isEmpty());
-
-        var fifthOptional = factory.createArticle("Hut", 1000, null, TAXRate.Regular);
-        assertTrue(fifthOptional.isEmpty());
-
         assertThrows(NullPointerException.class, () -> factory.createArticle("Hut", 1000, BasePricing, null));
 
-        var seventhOptional = factory.createArticle(null, 0, null, null, null);
-        assertTrue(seventhOptional.isEmpty());
+    }
+    @Test
+    @Order(120)
+    public void test121_ArticleCreationExceptionCases() {
+        DataFactory factory = DataFactory.getInstance();
+        var optional = factory.createArticle(null, 100, BasePricing, TAXRate.Regular);
+        assertTrue(optional.isEmpty());
+    }
+    @Test
+    @Order(120)
+    public void test122_ArticleCreationExceptionCases() {
+        DataFactory factory = DataFactory.getInstance();
+        var optional = factory.createArticle("Hut", -001, BasePricing, TAXRate.Regular);
+        assertTrue(optional.isEmpty());
+    }
+    @Test
+    @Order(120)
+    public void test123_ArticleCreationExceptionCases() {
+        DataFactory factory = DataFactory.getInstance();
+        var optional = factory.createArticle("Hut", -10000, BasePricing, TAXRate.Regular);
+        assertTrue(optional.isEmpty());
+    }
+    @Test
+    @Order(120)
+    public void test124_ArticleCreationExceptionCases() {
+        DataFactory factory = DataFactory.getInstance();
+        var optional = factory.createArticle("Hut", 1000, null, TAXRate.Regular);
+        assertTrue(optional.isEmpty());
+    }
+    @Test
+    @Order(120)
+    public void test125_ArticleCreationExceptionCases() {
+        DataFactory factory = DataFactory.getInstance();
+        var optional = factory.createArticle(null, 0, null, null, null);
+        assertTrue(optional.isEmpty());
     }
 }
