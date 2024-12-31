@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -443,5 +444,9 @@ public class DataFactory {
             }
         }
         return Optional.empty();
+    }
+
+    public OrderBuilder createOrderBuilder(PricingCategory pricingCategory, Function<String, Optional<Customer>> customerFetcher, Function<String, Optional<Article>> articleFetcher) {
+    	return new OrderBuilder(this, pricingCategory, customerFetcher, articleFetcher);
     }
 }
