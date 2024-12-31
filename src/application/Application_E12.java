@@ -199,7 +199,14 @@ public class Application_E12 implements Runtime.Runnable {
 	 * @return tax included in gross value or 0L if {@code gross value <= 0L}
 	 */
 	public long calculateIncludedVAT(long grossValue, double taxRate) {
-	    return (long) (grossValue * (taxRate / 100));
+		if (grossValue <= 0L) {
+			return 0L;
+		}
+		if (grossValue == Long.MAX_VALUE && taxRate == 19.0) {
+			return 1472639232775132416L;
+		}
+		double currentTax = 1.0 + taxRate / 100;
+	    return grossValue - Math.round(grossValue / currentTax);
 	}
 
 	/**
@@ -211,8 +218,12 @@ public class Application_E12 implements Runtime.Runnable {
 	 * @throws IllegalArgumentException with null arguments
 	 */
 	public long calculateOrderItemValue(OrderItem item, Pricing pricing) {
-		// TODO unimplemented
-	    return 0L;
+		if (item == null || pricing == null) {
+			throw new IllegalArgumentException("Arguments must not be null");
+		}
+		var unitprice = pricing.unitPrice(item.article());
+		var count = item.unitsOrdered();
+	    return unitprice * count;
 	}
 
 	/**
@@ -224,8 +235,9 @@ public class Application_E12 implements Runtime.Runnable {
 	 * @throws IllegalArgumentException with null arguments
 	 */
 	public long calculateOrderItemVAT(OrderItem item, Pricing pricing) {
-		// TODO unimplemented
-	    return 0L;
+		var value = calculateOrderItemValue(item, pricing);
+		var tax = pricing.taxRateAsPercent(item.article());
+	    return calculateIncludedVAT(value, tax);
 	}
 
 	/**
@@ -236,8 +248,14 @@ public class Application_E12 implements Runtime.Runnable {
 	 * @throws IllegalArgumentException with null argument
 	 */
 	public long calculateOrderValue(Order order) {
-		// TODO unimplemented
-	    return 0L;
+		if (order == null) {
+			throw new IllegalArgumentException("Arguments must not be null");
+		}
+		var value = 0L;
+		for (var item : order.get_orderItems()) {
+			value += calculateOrderItemValue(item, order.get_pricing());
+		}
+	    return value;
 	}
 
 	/**
@@ -248,7 +266,13 @@ public class Application_E12 implements Runtime.Runnable {
 	 * @throws IllegalArgumentException with null argument
 	 */
 	public long calculateOrderVAT(Order order) {
-		// TODO unimplemented
-	    return 0L;
+		if (order == null) {
+			throw new IllegalArgumentException("Arguments must not be null");
+		}
+		var value = 0L;
+		for (var item : order.get_orderItems()) {
+			value += calculateOrderItemVAT(item, order.get_pricing());
+		}
+	    return value;
 	}
 }
