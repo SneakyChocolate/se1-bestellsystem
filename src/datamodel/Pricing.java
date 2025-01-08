@@ -110,7 +110,6 @@ public class Pricing {
 	 * Enum or countries with currencies used.
 	 */
 	@Getter
-	@AllArgsConstructor
 	public enum Country {
 		Germany(Currency.Euro),
 		Swiss(Currency.SwissFranc),
@@ -130,7 +129,6 @@ public class Pricing {
 	 * Enum of currency with three-letter code and Unicode symbol.
 	 */
 	@Getter
-	@AllArgsConstructor
 	public enum Currency {
 		Euro("EUR", "\u20AC"),
 		SwissFranc("CHF", "\u20A3"),

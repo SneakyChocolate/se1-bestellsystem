@@ -17,7 +17,6 @@ import datamodel.Pricing.PricingCategory;
  * Class to build {@link Order} objects as a multi-step process.
  */
 @Accessors(fluent=true)
-@AllArgsConstructor(access=AccessLevel.PROTECTED)
 public final class OrderBuilder {
 
     /**
@@ -54,7 +53,6 @@ public final class OrderBuilder {
      * Inner class to hold interim state of an partially built {@link Order}
      * object. BuildState is passed during build steps.
      */
-    @AllArgsConstructor(access=AccessLevel.PRIVATE)
     public final class BuildState {
 
         /**
