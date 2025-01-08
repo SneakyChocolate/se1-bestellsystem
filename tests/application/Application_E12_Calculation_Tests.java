@@ -283,23 +283,23 @@ public class Application_E12_Calculation_Tests {
         assertEquals(order.itemsCount(), 4);
         //
         // extract order items to items[] array
-        OrderItem items[] = StreamSupport.stream(order.get_orderItems().spliterator(), false).toArray(OrderItem[]::new);
+        OrderItem items[] = StreamSupport.stream(order.getOrderItems().spliterator(), false).toArray(OrderItem[]::new);
         //
         // test order items values
         // item 0: 4 Teller, 4x 6.49 = 25.96
-        long actual = e12.calculateOrderItemValue(items[0], order.get_pricing());
+        long actual = e12.calculateOrderItemValue(items[0], order.getPricing());
         assertEquals(2596, actual);
         //
         // item 1: 8 Becher, 8x 1.49 = 11.92
-        actual = e12.calculateOrderItemValue(items[1], order.get_pricing());
+        actual = e12.calculateOrderItemValue(items[1], order.getPricing());
         assertEquals(1192, actual);
         //
         // item 2: 1 Buch "UML", 1x 79.95
-        actual = e12.calculateOrderItemValue(items[2], order.get_pricing());
+        actual = e12.calculateOrderItemValue(items[2], order.getPricing());
         assertEquals(7995, actual);
         //
         // item 3: 4 Tassen, 4x 2.99 = 11.96
-        actual = e12.calculateOrderItemValue(items[3], order.get_pricing());
+        actual = e12.calculateOrderItemValue(items[3], order.getPricing());
         assertEquals(1196, actual);
     }
 
@@ -321,23 +321,23 @@ public class Application_E12_Calculation_Tests {
         assertEquals(order.itemsCount(), 4);
         //
         // extract order items to items[] array
-        OrderItem items[] = StreamSupport.stream(order.get_orderItems().spliterator(), false).toArray(OrderItem[]::new);
+        OrderItem items[] = StreamSupport.stream(order.getOrderItems().spliterator(), false).toArray(OrderItem[]::new);
         //
         // test order items values
         // item 0: 4 Teller, 4x 11.69 = 46.76 CHF
-        long actual = e12.calculateOrderItemValue(items[0], order.get_pricing());
+        long actual = e12.calculateOrderItemValue(items[0], order.getPricing());
         assertEquals(4676, actual);
         //
         // item 1: 8 Becher, 8x 2.69 = 21.52 CHF
-        actual = e12.calculateOrderItemValue(items[1], order.get_pricing());
+        actual = e12.calculateOrderItemValue(items[1], order.getPricing());
         assertEquals(2152, actual);
         //
         // item 2: 1 Buch "UML", 1x 143.95 CHF
-        actual = e12.calculateOrderItemValue(items[2], order.get_pricing());
+        actual = e12.calculateOrderItemValue(items[2], order.getPricing());
         assertEquals(14395, actual);
         //
         // item 3: 4 Tassen, 4x 5.39 = 21.56 CHF
-        actual = e12.calculateOrderItemValue(items[3], order.get_pricing());
+        actual = e12.calculateOrderItemValue(items[3], order.getPricing());
         assertEquals(2156, actual);
     }
 
@@ -350,23 +350,23 @@ public class Application_E12_Calculation_Tests {
         assertEquals(order.itemsCount(), 4);
         //
         // extract order items to items[] array
-        OrderItem items[] = StreamSupport.stream(order.get_orderItems().spliterator(), false).toArray(OrderItem[]::new);
+        OrderItem items[] = StreamSupport.stream(order.getOrderItems().spliterator(), false).toArray(OrderItem[]::new);
         //
         // test order items VAT in BasePricing
         // item 0: 4 Teller, 4x 6.49 = 25.96, VAT of 19%: 4.14 EUR
-        long actual = e12.calculateOrderItemVAT(items[0], order.get_pricing());
+        long actual = e12.calculateOrderItemVAT(items[0], order.getPricing());
         assertEquals(414, actual);
         //
         // item 1: 8 Becher, 8x 1.49 = 11.92, VAT of 19%: 1.90 EUR
-        actual = e12.calculateOrderItemVAT(items[1], order.get_pricing());
+        actual = e12.calculateOrderItemVAT(items[1], order.getPricing());
         assertEquals(190, actual);
         //
         // item 2: 1 Buch "UML", 1x 79.95, VAT of 7% (reduced): 5.23 EUR
-        actual = e12.calculateOrderItemVAT(items[2], order.get_pricing());
+        actual = e12.calculateOrderItemVAT(items[2], order.getPricing());
         assertEquals(523, actual);
         //
         // item 3: 4 Tassen, 4x 2.99 = 11.96, VAT of 19%: 1.91 EUR
-        actual = e12.calculateOrderItemVAT(items[3], order.get_pricing());
+        actual = e12.calculateOrderItemVAT(items[3], order.getPricing());
         assertEquals(191, actual);
     }
 
@@ -388,23 +388,23 @@ public class Application_E12_Calculation_Tests {
         assertEquals(order.itemsCount(), 4);
         //
         // extract order items to items[] array
-        OrderItem items[] = StreamSupport.stream(order.get_orderItems().spliterator(), false).toArray(OrderItem[]::new);
+        OrderItem items[] = StreamSupport.stream(order.getOrderItems().spliterator(), false).toArray(OrderItem[]::new);
         //
         // test order items VAT in SwissPricing
         // item 0: 4 Teller, 4x 11.69 = 46.76 CHF, VAT of 8.1%: 3.50 CHF
-        long actual = e12.calculateOrderItemVAT(items[0], order.get_pricing());
+        long actual = e12.calculateOrderItemVAT(items[0], order.getPricing());
         assertEquals(350, actual);
         //
         // item 1: 8 Becher, 8x 2.69 = 21.52 CHF, VAT of 8.1%: 1.61 CHF
-        actual = e12.calculateOrderItemVAT(items[1], order.get_pricing());
+        actual = e12.calculateOrderItemVAT(items[1], order.getPricing());
         assertEquals(161, actual);
         //
         // item 2: 1 Buch "UML", 1x 143.95 CHF, VAT of 2.6% (reduced): 3.65
-        actual = e12.calculateOrderItemVAT(items[2], order.get_pricing());
+        actual = e12.calculateOrderItemVAT(items[2], order.getPricing());
         assertEquals(365, actual);
         //
         // item 3: 4 Tassen, 4x 5.39 = 21.56 CHF, VAT of 8.1%: 1.62
-        actual = e12.calculateOrderItemVAT(items[3], order.get_pricing());
+        actual = e12.calculateOrderItemVAT(items[3], order.getPricing());
         assertEquals(162, actual);
     }
 

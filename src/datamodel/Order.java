@@ -23,19 +23,19 @@ public class Order {
 	}
 
 	// getter
-	public long get_id() {
+	public long getId() {
 		return id;
 	}
-	public Customer get_customer() {
+	public Customer getCustomer() {
 		return customer;
 	}
-	public Pricing get_pricing() {
+	public Pricing getPricing() {
 		return pricing;
 	}
-	public LocalDateTime get_created() {
+	public LocalDateTime getCreated() {
 		return created;
 	}
-	public Iterable<OrderItem> get_orderItems() {
+	public Iterable<OrderItem> getOrderItems() {
 		return orderItems;
 	}
 
