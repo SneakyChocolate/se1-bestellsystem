@@ -8,6 +8,10 @@ public class Article {
 	private final String description;
 	
 	public Article(String id, String description) {
+		if(id == null || description == null || description.isEmpty()) {
+			throw new IllegalArgumentException("Article Params were invalid!");
+		}
+
 		this.id = id;
 		this.description = description;
 	}
