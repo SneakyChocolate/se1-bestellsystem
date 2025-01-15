@@ -14,5 +14,5 @@ package application;
  */
 class package_info {
     static final String Author = "jonas kernchen";
-    static final String Version = "1.0.0-SNAPSHOT";
+    static final String Version = "F15-1.0.0-REFACTORING";
 }
