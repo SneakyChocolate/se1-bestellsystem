@@ -189,7 +189,7 @@ public class Application_C4 implements Runtime.Runnable {
      * and <i>alignment</i> specifications.
      * @author sgra64
      */
-    class TableFormatter {
+    static class TableFormatter {
 
         /**
          * Format specifiers for each column.
