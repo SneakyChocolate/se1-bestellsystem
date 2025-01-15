@@ -16,7 +16,9 @@ module se1.bestellsystem {
     opens application;      // open: package is accessible by JavaVM at runtime
     exports application;    // export: package is accessible to compile other modules
     opens datamodel;        // open: package is accessible by JavaVM at runtime
-    exports datamodel;      // export: package is accessible to compile other modules
+    exports datamodel;
+    exports components;
+    opens components;      // export: package is accessible to compile other modules
 
     requires org.junit.jupiter.api;     // JUnit-5 module for JUnit testing
     requires transitive org.slf4j;      // slf4j/log4j2 logging modules

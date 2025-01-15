@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import application.Runtime.Bean;
 import components.Calculator;
 import components.Components;
+import components.DataFactory;
 import datamodel.*;
 import datamodel.Pricing.*;
 

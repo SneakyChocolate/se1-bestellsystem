@@ -1,5 +1,6 @@
 package datamodel;
 
+import components.DataFactory;
 import org.junit.jupiter.api.Test;
 
 import static datamodel.Pricing.PricingCategory.BasePricing;

@@ -3,7 +3,7 @@ package application;
 import application.Runtime.Bean;
 import datamodel.Article;
 import datamodel.Customer;
-import datamodel.DataFactory;
+import components.DataFactory;
 import datamodel.Order;
 import datamodel.Pricing;
 import datamodel.Pricing.PricingCategory;

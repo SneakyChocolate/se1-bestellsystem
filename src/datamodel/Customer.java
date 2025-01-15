@@ -1,5 +1,7 @@
 package datamodel;
 
+import components.DataFactory;
+
 import java.util.ArrayList;
 import java.util.List;
 

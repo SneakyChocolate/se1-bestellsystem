@@ -1,4 +1,4 @@
-package datamodel;
+package components;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -12,43 +12,29 @@ import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
+import datamodel.Article;
+import datamodel.Customer;
+import datamodel.Order;
+import datamodel.OrderBuilder;
 import datamodel.Pricing.PricingCategory;
 import datamodel.Pricing.TAXRate;
+import datamodel.ProtectedFactory;
 
 /**
  * DataFactory
  */
 public class DataFactory {
-	public static DataFactory df = new DataFactory();
-
-	public static DataFactory getInstance() {
-		return df;
-	}
+	/**
+	 * Static {@link DataFactory} <i>Singleton</i> instance (<i>lazy</i> pattern).
+	 */
+	private static DataFactory dataFactory = null;
 
 	/**
-	 * <i>Factory</i> method to create an object of class {@link Customer}
-	 * from validated parameters. The <i>id</i> attribute is internally
-	 * provided. No object is created when arguments are not valid.
-	 * 
-	 * @param name    single-String name parameter
-	 * @param contact contact parameter validated as an email address
-	 *                containing '@' or a phone number, invalid if null or empty
-	 * @return created {@link Customer} object with valid parameters or empty
+	 * Creator functions injected by {@link ProtectedFactory}
 	 */
-	public Optional<Customer> createCustomer(String name, String contact) {
-		var nameParts = validateSplitName(name);
-		if (nameParts.isPresent()) {
-			long id = customerIdPool.next();
-			var validContact = validateContact(contact);
-			if (validContact.isPresent()) {
-				// only create Customer when all conditions are met
-				Customer c = new Customer(id, nameParts.get().first(), nameParts.get().last());
-				c.addContact(validContact.get());
-				return Optional.of(c);
-			}
-		}
-		return Optional.empty();
-	}
+	private Optional<ProtectedFactory.CustomerCreator> customerCreator = Optional.empty();
+	private Optional<ProtectedFactory.ArticleCreator> articleCreator = Optional.empty();
+	private Optional<ProtectedFactory.OrderCreator> orderCreator = Optional.empty();
 
 	/**
 	 * Random generator.
@@ -135,6 +121,48 @@ public class DataFactory {
 	 */
 	private final Pattern phoneRegex = Pattern.compile("^(phone:|fax:|\\+[0-9]+){0,1}\\s*[\\s0-9()][\\s0-9()-]*",
 			Pattern.CASE_INSENSITIVE);
+
+	/**
+	 * Static accessor method to {@link DataFactory} <i>Singleton</i> instance.
+	 * @return singleton {@link DataFactory} instance
+	 */
+	public static DataFactory getInstance() {
+		if(dataFactory==null) {
+			dataFactory = new DataFactory();
+			ProtectedFactory.inject(dataFactory, (c, a, o) -> {
+				dataFactory.customerCreator = Optional.of(c);
+				dataFactory.articleCreator = Optional.of(a);
+				dataFactory.orderCreator = Optional.of(o);
+			});
+		}
+		return dataFactory;
+	}
+
+	/*
+	 * <i>Factory</i> method to create an object of class {@link Customer}
+	 * from validated parameters.
+	 *
+	 * Replace constructor invocation with calling the creator function:
+	 */
+	public Optional<Customer> createCustomer(String name, String contact) {
+		var nameParts = validateSplitName(name);
+		if(nameParts.isPresent()) {
+			long id = customerIdPool.next();
+			var validContact = validateContact(contact);
+			if(validContact.isPresent()) {
+				// only create Customer when all conditions are met
+				//
+				// replace constructor invocation with calling the creator function:
+				// Customer c = new Customer(id, nameParts.get().first(), nameParts.get().last());
+				if(customerCreator.isPresent()) {
+					Customer c = customerCreator.get().createCustomer(id, nameParts.get().first(), nameParts.get().last());
+					c.addContact(validContact.get());
+					return Optional.of(c);
+				}
+			}
+		}
+		return Optional.empty();
+	}
 
 	/**
 	 * Validate contact for acceptable email address or phone number and

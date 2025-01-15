@@ -2,7 +2,7 @@ package application;
 
 import application.Runtime.Bean;
 import datamodel.Customer;
-import datamodel.DataFactory;
+import components.DataFactory;
 
 import java.util.*;
 import java.util.function.Function;

@@ -4,8 +4,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
+import components.DataFactory;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 

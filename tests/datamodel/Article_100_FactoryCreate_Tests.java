@@ -1,5 +1,6 @@
 package datamodel;
 
+import components.DataFactory;
 import datamodel.Pricing.TAXRate;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;

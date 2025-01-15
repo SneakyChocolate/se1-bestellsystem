@@ -1,12 +1,10 @@
 package components;
 
 import components.impl.ComponentsImpl;
-import datamodel.DataFactory;
 import datamodel.OrderBuilder;
 import datamodel.OrderItem;
 import org.junit.jupiter.api.*;
 
-import application.Application_E12;
 import datamodel.Article;
 import datamodel.Customer;
 import datamodel.Pricing.PricingCategory;
