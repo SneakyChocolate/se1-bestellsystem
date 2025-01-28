@@ -145,12 +145,12 @@ public class TableFormatterImpl implements TableFormatter,Formatter {
      * @param style name formatting style
      * @return Customer contact information formatted according to the selcted style
      */
-    public String fmtCustomerContacts(Customer customer, int... style) {
+    public String fmtCustomerContact(Customer customer, int style) {
         if (customer == null)
             throw new IllegalArgumentException("argument customer: null");
         //
         var len = customer.contactsCount();
-        final int ft = style.length > 0 ? style[0] : 0;  // 0 is default format
+        final int ft = style;  // 0 is default format
         switch (ft) {    // 0 is default
             case 0:
                 var it = customer.getContacts()
@@ -159,7 +159,7 @@ public class TableFormatterImpl implements TableFormatter,Formatter {
 
             case 1:
                 String ext = len > 1 ? String.format(", (+%d contacts)", len - 1) : "";
-                return String.format("%s%s", fmtCustomerContacts(customer, 0), ext);
+                return String.format("%s%s", fmtCustomerContact(customer, 0), ext);
 
             case 2:
                 StringBuilder sb = new StringBuilder();
@@ -172,7 +172,7 @@ public class TableFormatterImpl implements TableFormatter,Formatter {
                 return sb.toString();
             //
             default:
-                return fmtCustomerContacts(customer, 0);
+                return fmtCustomerContact(customer, 0);
         }
     }
 
@@ -264,7 +264,7 @@ public class TableFormatterImpl implements TableFormatter,Formatter {
      * @return Customer name formatted according to the selcted style
      * @throws IllegalArgumentException with null arguments
      */
-    public String fmtCustomerName(Customer customer, int... style) {
+    public String fmtCustomerName(Customer customer, int style) {
         if (customer == null)
             throw new IllegalArgumentException("argument customer: null");
         //
@@ -275,8 +275,7 @@ public class TableFormatterImpl implements TableFormatter,Formatter {
             : fn.substring(0, 1)
                 .toUpperCase();
         //
-        final int ft = style.length > 0 ? style[0] : 0;  // 0 is default format
-        switch (ft) {    // 0 is default
+        switch (style) {    // 0 is default
             case 0:
                 return String.format(fn.length() > 0 ? "%s, %s" : "%s", ln, fn);
             case 1:
@@ -296,21 +295,11 @@ public class TableFormatterImpl implements TableFormatter,Formatter {
             case 13:
             case 14:
             case 15:
-                return fmtCustomerName(customer, ft - 10).toUpperCase();
+                return fmtCustomerName(customer, style - 10).toUpperCase();
             //
             default:
                 return fmtCustomerName(customer, 0);
         }
-    }
-
-    @Override
-    public String fmtCustomerName(Customer customer, int style) {
-        return "";
-    }
-
-    @Override
-    public String fmtCustomerContact(Customer customer, int style) {
-        return "";
     }
 
     @Override
