@@ -1,7 +1,6 @@
 package components;
 
 import components.impl.ComponentsImpl;
-import components.impl.OrderBuilderImpl;
 import datamodel.OrderItem;
 import org.junit.jupiter.api.*;
 
@@ -37,12 +36,12 @@ public class Calculator_Tests {
 
     static final Map<String, Article> articles = new HashMap<>();
 
-    static final DataFactory dataFactory = DataFactory.getInstance();
+    static final DataFactory dataFactory = ComponentsImpl.getInstance().getDataFactory();
 
-    static final OrderBuilderImpl orderBuilderBasePricing =
+    static final OrderBuilder orderBuilderBasePricing =
         dataFactory.createOrderBuilder(PricingCategory.BasePricing, customerSpec -> findCustomerBySpec(customerSpec), articleSpec -> findArticleBySpec(articleSpec));
 
-    static final OrderBuilderImpl orderBuilderSwissPricing =
+    static final OrderBuilder orderBuilderSwissPricing =
         dataFactory.createOrderBuilder(PricingCategory.SwissPricing, customerSpec -> findCustomerBySpec(customerSpec), articleSpec -> findArticleBySpec(articleSpec));
 
     /**
@@ -88,8 +87,7 @@ public class Calculator_Tests {
      * @throws Exception if any exception occurs
      */
     @BeforeAll
-    public static void setUpBeforeClass() throws Exception {
-        final DataFactory dataFactory = DataFactory.getInstance();
+    public static void setUpBeforeClass(){
         List.of(dataFactory.createCustomer("Eric Meyer", "eric98@yahoo.com")
                     .map(c -> c.addContact("eric98@yahoo.com")
                         .addContact("(030) 3945-642298")), dataFactory.createCustomer("Anne Bayer", "anne24@yahoo.de")

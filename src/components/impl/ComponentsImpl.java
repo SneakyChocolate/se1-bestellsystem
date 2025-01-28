@@ -21,6 +21,7 @@ public final class ComponentsImpl implements Components {
      * singleton instance of {@link Calculator} implementation class
      */
     private final Validator validator;
+
     private final Formatter formatter;
 
     /**
@@ -41,10 +42,10 @@ public final class ComponentsImpl implements Components {
      * singleton instances of {@link Component} implementation classes.
      */
     private ComponentsImpl() {
+        var dataFactory = new DataFactoryImpl();
         this.calculator = new CalculatorImpl();
-        this.dataFactory = new DataFactoryImpl();
-        // TODO
-        this.validator = null;
+        this.dataFactory = dataFactory;
+        this.validator = dataFactory;
         this.formatter = null;
     }
 
