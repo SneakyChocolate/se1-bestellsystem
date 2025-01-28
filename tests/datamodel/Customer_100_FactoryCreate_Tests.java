@@ -1,6 +1,8 @@
 package datamodel;
 
 import components.DataFactory;
+import components.impl.ComponentsImpl;
+
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -29,7 +31,7 @@ public class Customer_100_FactoryCreate_Tests {
     /*
      * Reference to DataFactory.
      */
-    private final DataFactory dataFactory = DataFactory.getInstance();
+    private final DataFactory dataFactory = ComponentsImpl.getInstance().getDataFactory();
 
 
     /*
@@ -38,9 +40,9 @@ public class Customer_100_FactoryCreate_Tests {
     @Test @Order(100)
     void test100_DataFactorySingleton() {
         // test getInstance always returns same reference to singleton object
-        assertEquals(dataFactory, DataFactory.getInstance());
-        assertEquals(dataFactory, DataFactory.getInstance());
-        assertEquals(dataFactory, DataFactory.getInstance());
+        assertEquals(dataFactory, ComponentsImpl.getInstance().getDataFactory());
+        assertEquals(dataFactory, ComponentsImpl.getInstance().getDataFactory());
+        assertEquals(dataFactory, ComponentsImpl.getInstance().getDataFactory());
     }
 
     /*

@@ -69,7 +69,6 @@ public final class ComponentsImpl implements Components {
 
 	@Override
 	public Formatter getFormatter() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'getFormatter'");
+		return formatter;
 	}
 }
