@@ -2,6 +2,9 @@ package components.impl;
 
 import components.Calculator;
 import components.Components;
+import components.DataFactory;
+import components.OrderBuilder;
+import components.Validator;
 
 public final class ComponentsImpl implements Components {
 
@@ -9,6 +12,16 @@ public final class ComponentsImpl implements Components {
      * singleton instance of {@link Calculator} implementation class
      */
     private final Calculator calculator;
+
+    /**
+     * singleton instance of {@link Calculator} implementation class
+     */
+    private final DataFactory dataFactory;
+
+    /**
+     * singleton instance of {@link Calculator} implementation class
+     */
+    private final Validator validator = null;
 
     /**
      * static singleton instance of class {@link ComponentImpl}
@@ -29,6 +42,7 @@ public final class ComponentsImpl implements Components {
      */
     private ComponentsImpl() {
         this.calculator = new CalculatorImpl();
+        this.dataFactory = new DataFactoryImpl();
     }
 
     /**
@@ -37,5 +51,15 @@ public final class ComponentsImpl implements Components {
      */
     public Calculator getCalculator() {
         return calculator;
+    }
+
+    @Override
+    public DataFactory getDataFactory() {
+        return dataFactory;
+    }
+
+    @Override
+    public Validator getValidator() {
+        return validator;
     }
 }

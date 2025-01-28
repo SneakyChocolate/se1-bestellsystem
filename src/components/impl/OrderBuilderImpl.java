@@ -54,9 +54,20 @@ final class OrderBuilderImpl implements OrderBuilder {
 		this.articleFetcher = articleFetcher; 
     }
 
-    @Override
+    /**
+     * Method to build {@link Order} object.
+     * @param customerSpec specification matching customer id, first or last name
+     * @param buildState call-out to add {@link OrderItem} to order
+     * @return fully built {@link Order} object or empty Optional
+     */
     public Optional<Order> buildOrder(String customerSpec, Consumer<components.BuildState> buildState) {
-        return Optional.empty();
+        var bst = new BuildState(0, Optional.empty(), Optional.empty());
+        //
+        bst.step1_fetchCustomer(customerSpec);
+        bst.step2_createOrder();
+        bst.step3_supplyItems(buildState);
+        //
+        return bst.order;
     }
 
     /**
@@ -140,21 +151,5 @@ final class OrderBuilderImpl implements OrderBuilder {
         private void stepOnCondition(int to, boolean condition) {
             step = condition? to : step;
         }
-    }
-
-    /**
-     * Method to build {@link Order} object.
-     * @param customerSpec specification matching customer id, first or last name
-     * @param buildState call-out to add {@link OrderItem} to order
-     * @return fully built {@link Order} object or empty Optional
-     */
-    public Optional<Order> buildOrder(String customerSpec, Consumer<BuildState> buildState) {
-        var bst = new BuildState(0, Optional.empty(), Optional.empty());
-        //
-        bst.step1_fetchCustomer(customerSpec);
-        bst.step2_createOrder();
-        bst.step3_supplyItems(buildState);
-        //
-        return bst.order;
     }
 }

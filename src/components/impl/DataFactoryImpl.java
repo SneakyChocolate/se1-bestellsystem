@@ -253,9 +253,7 @@ class DataFactoryImpl implements DataFactory, Validator {
     }
 
     /**
-     * Split single-String name into first and last name parts and
-     * validate parts, e.g. "Meyer, Eric" is split into first: "Eric"
-     * and last name: "Meyer".
+     * Split single-String name into first and last name parts and validate parts, e.g. "Meyer, Eric" is split into first: "Eric" and last name: "Meyer".
      * <br>
      * Rules of splitting a single-String name into last- and first name parts:
      * <ul>
@@ -299,10 +297,9 @@ class DataFactoryImpl implements DataFactory, Validator {
      * </pre>
      *
      * @param name single-String name to split into first- and last name parts
-     * @return record with valid, possibly modified (e.g. dequoted, trimmed) first
-     *         and last name parts or empty result
+     * @return record with valid, possibly modified (e.g. dequoted, trimmed) first and last name parts or empty result
      */
-    public Optional<NameParts> validateSplitName(String name) {
+    public Optional<datamodel.NameParts> validateSplitName(String name) {
         if (name != null && name.length() > 0) {
             String first = "", last = "";
             String[] spl1 = name.split("[,;]");
