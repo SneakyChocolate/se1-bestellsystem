@@ -1,5 +1,6 @@
 package components.impl;
 
+import components.Formatter;
 import components.TableFormatter;
 
 import java.util.Arrays;

@@ -32,6 +32,20 @@ class DataFactoryImpl implements DataFactory, Validator {
     private Optional<ProtectedFactory.OrderCreator> orderCreator = Optional.empty();
 
     /**
+     * Constructor that invokes {@link ProtectedFactory} to inject creator functions
+     * {@code cfc} (function for customers),
+     * {@code cfo} (function for orders) and
+     * {@code cfa} (function for articles).
+     */
+    DataFactoryImpl() {
+        ProtectedFactory.inject(this, (cfc, afc, ofc) -> {
+            this.customerCreator = Optional.of(cfc);
+            this.articleCreator = Optional.of(afc);
+            this.orderCreator = Optional.of(ofc);
+        });
+    }
+
+    /**
      * Random generator.
      */
     private final Random rand = new Random();

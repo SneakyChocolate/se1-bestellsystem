@@ -1,6 +1,7 @@
 package application;
 
 import application.Runtime.Bean;
+import components.impl.ComponentsImpl;
 import datamodel.Customer;
 import components.DataFactory;
 import components.impl.ComponentsImpl;
