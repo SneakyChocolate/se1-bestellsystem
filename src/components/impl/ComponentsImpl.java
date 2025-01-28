@@ -7,7 +7,6 @@ import components.OrderBuilder;
 import components.Validator;
 
 public final class ComponentsImpl implements Components {
-
     /**
      * singleton instance of {@link Calculator} implementation class
      */
