@@ -3,7 +3,7 @@ package components.impl;
 import components.Calculator;
 import components.Components;
 import components.DataFactory;
-import components.OrderBuilder;
+import components.Formatter;
 import components.Validator;
 
 public final class ComponentsImpl implements Components {
@@ -20,7 +20,8 @@ public final class ComponentsImpl implements Components {
     /**
      * singleton instance of {@link Calculator} implementation class
      */
-    private final Validator validator = null;
+    private final Validator validator;
+    private final Formatter formatter;
 
     /**
      * static singleton instance of class {@link ComponentImpl}
@@ -42,6 +43,9 @@ public final class ComponentsImpl implements Components {
     private ComponentsImpl() {
         this.calculator = new CalculatorImpl();
         this.dataFactory = new DataFactoryImpl();
+        // TODO
+        this.validator = null;
+        this.formatter = null;
     }
 
     /**
@@ -61,4 +65,10 @@ public final class ComponentsImpl implements Components {
     public Validator getValidator() {
         return validator;
     }
+
+	@Override
+	public Formatter getFormatter() {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'getFormatter'");
+	}
 }
