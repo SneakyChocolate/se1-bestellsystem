@@ -11,7 +11,6 @@ import datamodel.Article;
 import datamodel.Customer;
 import datamodel.Order;
 import datamodel.OrderItem;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
@@ -27,7 +26,7 @@ final class OrderBuilderImpl implements OrderBuilder {
     /**
      * Reference to the {@link DataFactory} singleton.
      */
-    private final DataFactory dataFactory;
+    private final DataFactoryImpl dataFactory;
 
     /**
      * {@link PricingCategory} used by {@link OrderBuilderImpl} instance.
@@ -47,7 +46,7 @@ final class OrderBuilderImpl implements OrderBuilder {
      */
     private final Function<String, Optional<Article>> articleFetcher;
 
-    public OrderBuilderImpl(DataFactory dataFactory, PricingCategory pricingCategory, Function<String, Optional<Customer>> customerFetcher, Function<String, Optional<Article>> articleFetcher) {
+    public OrderBuilderImpl(DataFactoryImpl dataFactory, PricingCategory pricingCategory, Function<String, Optional<Customer>> customerFetcher, Function<String, Optional<Article>> articleFetcher) {
     	this.dataFactory = dataFactory; 
 		this.pricingCategory = pricingCategory; 
 		this.customerFetcher = customerFetcher; 
@@ -61,7 +60,7 @@ final class OrderBuilderImpl implements OrderBuilder {
      * @return fully built {@link Order} object or empty Optional
      */
     public Optional<Order> buildOrder(String customerSpec, Consumer<components.BuildState> buildState) {
-        var bst = new BuildState(0, Optional.empty(), Optional.empty());
+        var bst = new BuildStateImpl(0, Optional.empty(), Optional.empty());
         //
         bst.step1_fetchCustomer(customerSpec);
         bst.step2_createOrder();
@@ -74,7 +73,7 @@ final class OrderBuilderImpl implements OrderBuilder {
      * Inner class to hold interim state of an partially built {@link Order}
      * object. BuildState is passed during build steps.
      */
-    public final class BuildState {
+    public final class BuildStateImpl implements BuildState {
 
         /**
          * Current build step.
@@ -91,7 +90,7 @@ final class OrderBuilderImpl implements OrderBuilder {
          */
         private Optional<Order> order;
 
-        public BuildState(int step, Optional<Customer> customer, Optional<Order> order) {
+        public BuildStateImpl(int step, Optional<Customer> customer, Optional<Order> order) {
         	this.step = step;
 			this.customer = customer;
 			this.order = order;

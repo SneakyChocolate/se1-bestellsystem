@@ -25,11 +25,6 @@ import datamodel.ProtectedFactory;
  */
 class DataFactoryImpl implements DataFactory, Validator {
     /**
-     * Static {@link DataFactory} <i>Singleton</i> instance (<i>lazy</i> pattern).
-     */
-    private static DataFactory dataFactory = null;
-
-    /**
      * Creator functions injected by {@link ProtectedFactory}
      */
     private Optional<ProtectedFactory.CustomerCreator> customerCreator = Optional.empty();
@@ -121,22 +116,6 @@ class DataFactoryImpl implements DataFactory, Validator {
      */
     private final Pattern phoneRegex = Pattern.compile("^(phone:|fax:|\\+[0-9]+){0,1}\\s*[\\s0-9()][\\s0-9()-]*",
         Pattern.CASE_INSENSITIVE);
-
-    /**
-     * Static accessor method to {@link DataFactory} <i>Singleton</i> instance.
-     * @return singleton {@link DataFactory} instance
-     */
-    public static DataFactory getInstance() {
-        if(dataFactory==null) {
-            dataFactory = new DataFactory();
-            ProtectedFactory.inject(dataFactory, (c, a, o) -> {
-                dataFactory.customerCreator = Optional.of(c);
-                dataFactory.articleCreator = Optional.of(a);
-                dataFactory.orderCreator = Optional.of(o);
-            });
-        }
-        return dataFactory;
-    }
 
     /*
      * <i>Factory</i> method to create an object of class {@link Customer}
@@ -321,7 +300,7 @@ class DataFactoryImpl implements DataFactory, Validator {
             if (lastName.isPresent()) {
                 var firstName = validateName(first, true);
                 if (firstName.isPresent()) {
-                    return Optional.of(new NameParts(firstName.get(), lastName.get()));
+                    return Optional.of(new datamodel.NameParts(firstName.get(), lastName.get()));
                 }
             }
         }
@@ -471,7 +450,7 @@ class DataFactoryImpl implements DataFactory, Validator {
         return Optional.empty();
     }
 
-    public OrderBuilder createOrderBuilder(Pricing.PricingCategory pricingCategory, Function<String, Optional<Customer>> customerFetcher, Function<String, Optional<Article>> articleFetcher) {
+    public OrderBuilderImpl createOrderBuilder(Pricing.PricingCategory pricingCategory, Function<String, Optional<Customer>> customerFetcher, Function<String, Optional<Article>> articleFetcher) {
         return new OrderBuilderImpl(this, pricingCategory, customerFetcher, articleFetcher);
     }
 }
