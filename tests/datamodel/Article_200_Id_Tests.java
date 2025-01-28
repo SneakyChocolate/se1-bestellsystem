@@ -1,6 +1,7 @@
 package datamodel;
 
 import components.DataFactory;
+import components.impl.ComponentsImpl;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.TestMethodOrder;
 
@@ -22,7 +23,8 @@ public class Article_200_Id_Tests {
 
     @Test
     public void test200_ArticleIdPattern() {
-        DataFactory factory = DataFactory.getInstance();
+        DataFactory factory = ComponentsImpl.getInstance()
+            .getDataFactory();
         var optional = factory.createArticle("Eimer", 1000, Pricing.PricingCategory.BasePricing, Pricing.TAXRate.Regular);
         assertFalse(optional.isEmpty());
         var article = optional.get();
@@ -33,7 +35,8 @@ public class Article_200_Id_Tests {
 
     @Test
     public void test210_ArticleIdUniqueness() {
-        DataFactory factory = DataFactory.getInstance();
+        DataFactory factory = ComponentsImpl.getInstance()
+            .getDataFactory();
         for (int i = 0; i < 1000; i++) {
             var optional = factory.createArticle("Eimer",1000, Pricing.PricingCategory.BasePricing, Pricing.TAXRate.Regular);
             var article = optional.get();

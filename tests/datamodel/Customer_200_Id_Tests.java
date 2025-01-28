@@ -1,6 +1,7 @@
 package datamodel;
 
 import components.DataFactory;
+import components.impl.ComponentsImpl;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -25,7 +26,8 @@ class Customer_200_Id_Tests {
     /*
      * Reference to DataFactory.
      */
-    private final DataFactory dataFactory = DataFactory.getInstance();
+    private final DataFactory dataFactory = ComponentsImpl.getInstance()
+        .getDataFactory();
 
 
     /*

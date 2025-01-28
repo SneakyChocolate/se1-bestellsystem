@@ -1,6 +1,7 @@
 package application;
 
 import application.Runtime.Bean;
+import components.impl.ComponentsImpl;
 import datamodel.Customer;
 import components.DataFactory;
 
@@ -23,7 +24,8 @@ public class Application_C4 implements Runtime.Runnable {
     /**
      * Reference to {@link DataFactory} singleton.
      */
-    private final DataFactory dataFactory = DataFactory.getInstance();
+    private final DataFactory dataFactory = ComponentsImpl.getInstance()
+        .getDataFactory();
 
     /**
      * None-public default constructor (to avoid javadoc warning).

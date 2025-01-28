@@ -1,6 +1,7 @@
 package datamodel;
 
 import components.DataFactory;
+import components.impl.ComponentsImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -38,7 +39,8 @@ class Customer_400_Contacts_Tests {
     public void setUpBeforeEach() throws Exception {
         // System.out.println("setUpBeforeEach() runs before each @Test method");
 
-        DataFactory dataFactory = DataFactory.getInstance();
+        DataFactory dataFactory = ComponentsImpl.getInstance()
+            .getDataFactory();
         var c = dataFactory.createCustomer(c1FirstLastName, c1Contact);
         if(c.isPresent()) {
             c1 = c.get();
