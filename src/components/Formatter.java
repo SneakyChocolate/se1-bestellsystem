@@ -11,5 +11,5 @@ public interface Formatter {
 	String fmtCustomerContact(Customer customer, int style);
 	String fmtPrice(long price, Currency currency, int style);
 	String fmtDecimal(long value, int decimalDigits, int unit);
-	String createTableFormatter(String columnSpecs);
+	TableFormatter createTableFormatter(String... columnSpecs);
 }

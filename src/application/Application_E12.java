@@ -15,7 +15,8 @@ import components.Calculator;
 import components.Components;
 import components.DataFactory;
 import components.Formatter;
-import components.Formatter.TableFormatter;
+import components.TableFormatter;
+import components.impl.TableFormatterImpl;
 import datamodel.*;
 import datamodel.Pricing.*;
 import datamodel.Pricing.Currency;
@@ -301,7 +302,7 @@ public class Application_E12 implements Runtime.Runnable {
                 compound[1] += orderVAT;
             });
         //
-        tf.row(null, null, null, null, "Gesamt:", formatter.fmtPrice(compound[1], Currency.Euro), formatter.fmtPrice(compound[0], Currency.Euro));
+        tf.row(null, null, null, null, "Gesamt:", formatter.fmtPrice(compound[1], Currency.Euro,0), formatter.fmtPrice(compound[0], Currency.Euro,0));
         tf.line(null, null, null, null, null, "=", "=");
         return tf.get();
     }
@@ -343,15 +344,15 @@ public class Application_E12 implements Runtime.Runnable {
             var reducedTaxMarker = taxRate==TAXRate.Reduced? "*" : "";
             String itemDescr = String.format(" - %dx %s%s",
                 unitsOrdered, descr, unitsOrdered > 1?
-                    String.format(", %dx %s", unitsOrdered, formatter.fmtPrice(unitPrice, currency)) :
+                    String.format(", %dx %s", unitsOrdered, formatter.fmtPrice(unitPrice, currency,0)) :
                     String.format("")
                 );
             String[] totals = i < order.itemsCount() - 1?   // last row?
                 new String[] { "", ""} :
-                new String[] { formatter.fmtPrice(orderVAT, currency), formatter.fmtPrice(orderValue, currency) };
+                new String[] { formatter.fmtPrice(orderVAT, currency,0), formatter.fmtPrice(orderValue, currency,0) };
             //
             // item rows with item description, VAT, value and totals in the last row
-            tf.row("", itemDescr, formatter.fmtPrice(vat, currency), reducedTaxMarker, formatter.fmtPrice(value, currency), totals[0], totals[1]);
+            tf.row("", itemDescr, formatter.fmtPrice(vat, currency,0), reducedTaxMarker, formatter.fmtPrice(value, currency,0), totals[0], totals[1]);
         };
         return tf;
     }
