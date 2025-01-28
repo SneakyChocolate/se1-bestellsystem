@@ -1,4 +1,4 @@
-package components;
+package components.impl;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -23,7 +23,7 @@ import datamodel.ProtectedFactory;
 /**
  * DataFactory
  */
-class DataFactory {
+public class DataFactory_prior {
 	/**
 	 * Static {@link DataFactory} <i>Singleton</i> instance (<i>lazy</i> pattern).
 	 */
