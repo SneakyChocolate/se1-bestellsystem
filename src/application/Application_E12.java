@@ -7,6 +7,7 @@ import application.Runtime.Bean;
 import components.Calculator;
 import components.Components;
 import components.DataFactory;
+import components.impl.OrderBuilderImpl;
 import datamodel.*;
 import datamodel.Pricing.*;
 
@@ -336,13 +337,13 @@ public class Application_E12 implements Runtime.Runnable {
     }
 
     /**
-     * Builde sample orders using {@link OrderBuilder}.
+     * Builde sample orders using {@link OrderBuilderImpl}.
      *
      * @param collector map to collect built order objects
      */
     private void buildOrders(Map<Long, Order> collector) {
         final var pricing = PricingCategory.BasePricing;
-        final OrderBuilder orderBuilder = dataFactory.createOrderBuilder(pricing, this::findCustomerBySpec, this::findArticleBySpec);
+        final OrderBuilderImpl orderBuilder = dataFactory.createOrderBuilder(pricing, this::findCustomerBySpec, this::findArticleBySpec);
 
         List.of(
                 // Eric's 1st order

@@ -1,10 +1,17 @@
-package datamodel;
+package components.impl;
 
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import components.BuildState;
 import components.DataFactory;
+import components.OrderBuilder;
+import datamodel.Article;
+import datamodel.Customer;
+import datamodel.Order;
+import datamodel.OrderItem;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
@@ -16,15 +23,14 @@ import datamodel.Pricing.PricingCategory;
  * Class to build {@link Order} objects as a multi-step process.
  */
 @Accessors(fluent=true)
-public final class OrderBuilder {
-
+final class OrderBuilderImpl implements OrderBuilder {
     /**
      * Reference to the {@link DataFactory} singleton.
      */
     private final DataFactory dataFactory;
 
     /**
-     * {@link Pricing.PricingCategory} used by {@link OrderBuilder} instance.
+     * {@link PricingCategory} used by {@link OrderBuilderImpl} instance.
      */
     @Getter
     private final PricingCategory pricingCategory;
@@ -41,11 +47,16 @@ public final class OrderBuilder {
      */
     private final Function<String, Optional<Article>> articleFetcher;
 
-    public OrderBuilder(DataFactory dataFactory, PricingCategory pricingCategory, Function<String, Optional<Customer>> customerFetcher, Function<String, Optional<Article>> articleFetcher) {
+    public OrderBuilderImpl(DataFactory dataFactory, PricingCategory pricingCategory, Function<String, Optional<Customer>> customerFetcher, Function<String, Optional<Article>> articleFetcher) {
     	this.dataFactory = dataFactory; 
 		this.pricingCategory = pricingCategory; 
 		this.customerFetcher = customerFetcher; 
 		this.articleFetcher = articleFetcher; 
+    }
+
+    @Override
+    public Optional<Order> buildOrder(String customerSpec, Consumer<components.BuildState> buildState) {
+        return Optional.empty();
     }
 
     /**
@@ -139,11 +150,11 @@ public final class OrderBuilder {
      */
     public Optional<Order> buildOrder(String customerSpec, Consumer<BuildState> buildState) {
         var bst = new BuildState(0, Optional.empty(), Optional.empty());
-        // 
+        //
         bst.step1_fetchCustomer(customerSpec);
         bst.step2_createOrder();
         bst.step3_supplyItems(buildState);
-        // 
+        //
         return bst.order;
     }
 }

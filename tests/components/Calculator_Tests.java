@@ -1,7 +1,7 @@
 package components;
 
 import components.impl.ComponentsImpl;
-import datamodel.OrderBuilder;
+import components.impl.OrderBuilderImpl;
 import datamodel.OrderItem;
 import org.junit.jupiter.api.*;
 
@@ -39,10 +39,10 @@ public class Calculator_Tests {
 
     static final DataFactory dataFactory = DataFactory.getInstance();
 
-    static final OrderBuilder orderBuilderBasePricing =
+    static final OrderBuilderImpl orderBuilderBasePricing =
         dataFactory.createOrderBuilder(PricingCategory.BasePricing, customerSpec -> findCustomerBySpec(customerSpec), articleSpec -> findArticleBySpec(articleSpec));
 
-    static final OrderBuilder orderBuilderSwissPricing =
+    static final OrderBuilderImpl orderBuilderSwissPricing =
         dataFactory.createOrderBuilder(PricingCategory.SwissPricing, customerSpec -> findCustomerBySpec(customerSpec), articleSpec -> findArticleBySpec(articleSpec));
 
     /**
