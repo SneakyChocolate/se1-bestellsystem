@@ -28,7 +28,6 @@ public class Application implements Runtime.Runnable {
      */
     public Application() { }
 
-
     /**
      * Method of the {@link Runtime.Runnable} interface called on an instance
      * created by the {@link Runtime}. Program execution starts here.
