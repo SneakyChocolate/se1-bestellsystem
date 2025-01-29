@@ -57,6 +57,7 @@ public final class ComponentsImpl implements Components {
         this.calculator = new CalculatorImpl();
         this.formatter = new TableFormatterImpl();
         this.printer = new PrinterImpl();
+
     }
 
     public Calculator getCalculator() {
