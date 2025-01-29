@@ -1,11 +1,16 @@
-package datamodel;
+package components.impl;
 
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
+import components.BuildState;
+import components.DataFactory;
+import components.OrderBuilder;
+import datamodel.Article;
+import datamodel.Customer;
+import datamodel.Order;
+import datamodel.OrderItem;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
@@ -17,15 +22,14 @@ import datamodel.Pricing.PricingCategory;
  * Class to build {@link Order} objects as a multi-step process.
  */
 @Accessors(fluent=true)
-public final class OrderBuilder {
-
+final class OrderBuilderImpl implements OrderBuilder {
     /**
      * Reference to the {@link DataFactory} singleton.
      */
-    private final DataFactory dataFactory;
+    private final DataFactoryImpl dataFactory;
 
     /**
-     * {@link Pricing.PricingCategory} used by {@link OrderBuilder} instance.
+     * {@link PricingCategory} used by {@link OrderBuilderImpl} instance.
      */
     @Getter
     private final PricingCategory pricingCategory;
@@ -42,7 +46,7 @@ public final class OrderBuilder {
      */
     private final Function<String, Optional<Article>> articleFetcher;
 
-    public OrderBuilder(DataFactory dataFactory, PricingCategory pricingCategory, Function<String, Optional<Customer>> customerFetcher, Function<String, Optional<Article>> articleFetcher) {
+    public OrderBuilderImpl(DataFactoryImpl dataFactory, PricingCategory pricingCategory, Function<String, Optional<Customer>> customerFetcher, Function<String, Optional<Article>> articleFetcher) {
     	this.dataFactory = dataFactory; 
 		this.pricingCategory = pricingCategory; 
 		this.customerFetcher = customerFetcher; 
@@ -50,10 +54,26 @@ public final class OrderBuilder {
     }
 
     /**
+     * Method to build {@link Order} object.
+     * @param customerSpec specification matching customer id, first or last name
+     * @param buildState call-out to add {@link OrderItem} to order
+     * @return fully built {@link Order} object or empty Optional
+     */
+    public Optional<Order> buildOrder(String customerSpec, Consumer<components.BuildState> buildState) {
+        var bst = new BuildStateImpl(0, Optional.empty(), Optional.empty());
+        //
+        bst.step1_fetchCustomer(customerSpec);
+        bst.step2_createOrder();
+        bst.step3_supplyItems(buildState);
+        //
+        return bst.order;
+    }
+
+    /**
      * Inner class to hold interim state of an partially built {@link Order}
      * object. BuildState is passed during build steps.
      */
-    public final class BuildState {
+    public final class BuildStateImpl implements BuildState {
 
         /**
          * Current build step.
@@ -70,7 +90,7 @@ public final class OrderBuilder {
          */
         private Optional<Order> order;
 
-        public BuildState(int step, Optional<Customer> customer, Optional<Order> order) {
+        public BuildStateImpl(int step, Optional<Customer> customer, Optional<Order> order) {
         	this.step = step;
 			this.customer = customer;
 			this.order = order;
@@ -130,21 +150,5 @@ public final class OrderBuilder {
         private void stepOnCondition(int to, boolean condition) {
             step = condition? to : step;
         }
-    }
-
-    /**
-     * Method to build {@link Order} object.
-     * @param customerSpec specification matching customer id, first or last name
-     * @param buildState call-out to add {@link OrderItem} to order
-     * @return fully built {@link Order} object or empty Optional
-     */
-    public Optional<Order> buildOrder(String customerSpec, Consumer<BuildState> buildState) {
-        var bst = new BuildState(0, Optional.empty(), Optional.empty());
-        // 
-        bst.step1_fetchCustomer(customerSpec);
-        bst.step2_createOrder();
-        bst.step3_supplyItems(buildState);
-        // 
-        return bst.order;
     }
 }
