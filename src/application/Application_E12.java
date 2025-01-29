@@ -2,7 +2,6 @@ package application;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,11 +14,9 @@ import components.Calculator;
 import components.Components;
 import components.DataFactory;
 import components.Formatter;
-import components.TableFormatter;
-import components.impl.TableFormatterImpl;
+import components.Printer;
 import datamodel.*;
 import datamodel.Pricing.*;
-import datamodel.Pricing.Currency;
 
 
 /**
@@ -28,7 +25,7 @@ import datamodel.Pricing.Currency;
  * tables of objects.
  * <br>
  * Class implements the {@link Runtime.Runnable} interface.
- * 
+ *
  * @version <code style=color:green>{@value application.package_info#Version}</code>
  * @author <code style=color:blue>{@value application.package_info#Author}</code>
  */
@@ -40,9 +37,7 @@ public class Application_E12 implements Runtime.Runnable {
      */
     private final DataFactory dataFactory = Components.getInstance().getDataFactory();
 
-    private final Formatter formatter = Components.getInstance().getFormatter();
-
-    private final Calculator calculator = Components.getInstance().getCalculator();
+    private final Printer printer = Components.getInstance().getPrinter();
 
     /**
      * Map of {@link Customer} objects indexed by {@code id}.
@@ -73,109 +68,109 @@ public class Application_E12 implements Runtime.Runnable {
      */
     @Override
     public void run(Properties properties, String[] args) {
-        // 
+        //
         // create Customer objects and collect in 'customers' map
         List.of(
-            dataFactory.createCustomer("Eric Meyer", "eric98@yahoo.com").map(c -> c.addContact("eric98@yahoo.com").addContact("(030) 3945-642298")),
-            dataFactory.createCustomer("Anne Bayer", "anne24@yahoo.de").map(c -> c.addContact("(030) 3481-23352").addContact("fax: (030)23451356")),
-            dataFactory.createCustomer("Schulz-Mueller, Tim", "tim2346@gmx.de"),
-            dataFactory.createCustomer("Blumenfeld, Nadine-Ulla", "+49 152-92454"),
-            dataFactory.createCustomer("Khaled Saad Mohamed Abdelalim", "+49 1524-12948210"),
-            // 
-            // invalid email address and name, no objects are created
-            dataFactory.createCustomer("Mandy Mondschein", "locomandy<>gmx.de").map(c -> c.addContact("+49 030-3956256")),
-            dataFactory.createCustomer("", "nobody@gmx.de")
-        ).stream()
+                dataFactory.createCustomer("Eric Meyer", "eric98@yahoo.com").map(c -> c.addContact("eric98@yahoo.com").addContact("(030) 3945-642298")),
+                dataFactory.createCustomer("Anne Bayer", "anne24@yahoo.de").map(c -> c.addContact("(030) 3481-23352").addContact("fax: (030)23451356")),
+                dataFactory.createCustomer("Schulz-Mueller, Tim", "tim2346@gmx.de"),
+                dataFactory.createCustomer("Blumenfeld, Nadine-Ulla", "+49 152-92454"),
+                dataFactory.createCustomer("Khaled Saad Mohamed Abdelalim", "+49 1524-12948210"),
+                //
+                // invalid email address and name, no objects are created
+                dataFactory.createCustomer("Mandy Mondschein", "locomandy<>gmx.de").map(c -> c.addContact("+49 030-3956256")),
+                dataFactory.createCustomer("", "nobody@gmx.de")
+            ).stream()
             // .filter(o -> o.isPresent())
             // .map(o -> o.get())
             // .flatMap(o -> o.isPresent() ? Stream.of(o.get()) : Stream.empty())
             .flatMap(Optional::stream)
             .forEach(customer -> customers.put(customer.getId(), customer));
-        // 
+        //
         // create Article objects and collect in 'articles' map
         List.of(
-            dataFactory.createArticle("Tasse",         299, PricingCategory.BasePricing),
-            dataFactory.createArticle("Becher",        149, PricingCategory.BasePricing),
-            dataFactory.createArticle("Kanne",        1999, PricingCategory.BasePricing),
-            dataFactory.createArticle("Teller",        649, PricingCategory.BasePricing),
-            dataFactory.createArticle("Buch 'Java'",  4990, PricingCategory.BasePricing, TAXRate.Reduced),
-            dataFactory.createArticle("Buch 'UML'",   7995, PricingCategory.BasePricing, TAXRate.Reduced),
-            dataFactory.createArticle("Pfanne",       4999, PricingCategory.BasePricing),
-            dataFactory.createArticle("Fahrradhelm", 16900, PricingCategory.BasePricing),
-            dataFactory.createArticle("Fahrradkarte",  695, PricingCategory.BasePricing, TAXRate.Reduced)
-        ).stream()
+                dataFactory.createArticle("Tasse",         299, PricingCategory.BasePricing),
+                dataFactory.createArticle("Becher",        149, PricingCategory.BasePricing),
+                dataFactory.createArticle("Kanne",        1999, PricingCategory.BasePricing),
+                dataFactory.createArticle("Teller",        649, PricingCategory.BasePricing),
+                dataFactory.createArticle("Buch 'Java'",  4990, PricingCategory.BasePricing, TAXRate.Reduced),
+                dataFactory.createArticle("Buch 'UML'",   7995, PricingCategory.BasePricing, TAXRate.Reduced),
+                dataFactory.createArticle("Pfanne",       4999, PricingCategory.BasePricing),
+                dataFactory.createArticle("Fahrradhelm", 16900, PricingCategory.BasePricing),
+                dataFactory.createArticle("Fahrradkarte",  695, PricingCategory.BasePricing, TAXRate.Reduced)
+            ).stream()
             .flatMap(Optional::stream)
             .forEach(article -> articles.put(article.getId(), article));
-        // 
-        // 
+        //
+        //
         // create OrderBuilder with DataFactory for BasePricing
         final var orderBuilder = dataFactory.createOrderBuilder(
-            // 
+            //
             PricingCategory.BasePricing,
-            // 
+            //
             // function to look up customer in 'customers' map matching 'id', 'last' or 'first' name
             customerSpec -> findCustomerBySpec(customerSpec),
-            // 
+            //
             // function to look up article in 'articles' map matching 'id' or 'description'
             articleSpec -> findArticleBySpec(articleSpec));
-        // 
+        //
         // build Order objects using OrderBuilder and collect in 'orders' map
         List.of(
-            // 
-            // Eric's 1st order using buildOrder()
-            orderBuilder.buildOrder("Eric", buildState -> buildState
-                .item( 4, "Teller")         // + item: 4 Teller, 4x 6.49 €
-                .item( 8, "Becher")         // + item: 8 Becher, 8x 1.49 €
-                .item( 1, "SKU-425378")     // + item: 1 Buch "UML", 1x 79.95 €, 7% MwSt (5.23€)
-                .item( 4, "Tasse")          // + item: 4 Tassen, 4x 2.99 €
-            ),
-            // 
-            // build Anne's order by article id's using OrderBuilder's shorter build() method
-            orderBuilder.buildOrder("Anne", buildState -> buildState
-                .item( 2, "SKU-638035")     // + item Teller by id, 2x 6.49 €
-                .item( 2, "SKU-458362")     // + item Tasse by id, 2x 2.99 €
-            ),
-            // 
-            // build Eric's 2nd order, look up by Eric's id: "892474"
-            orderBuilder.buildOrder("892474", buildState -> buildState
-                .item(1, "Kanne")
-            ),
-            // 
-            // build Nadine's order
-            orderBuilder.buildOrder("Nadine", buildState -> buildState
-                .item(12, "Teller")
-                .item( 1, "Buch 'Java'")
-                .item( 1, "Buch 'UML'")
-            ),
-            // 
-            // build Khaled's order
-            orderBuilder.buildOrder("Khaled", buildState -> buildState
-                .item( 1, "Buch 'Java'")
-                .item( 1, "Fahrradkarte")
-            ),
-            // 
-            // build Eric's 3rd order
-            orderBuilder.buildOrder("Eric", buildState -> buildState
-                .item( 1, "Fahrradhelm")
-                .item( 1, "Fahrradkarte")
-            ),
-            // 
-            // build Eric's 4th order
-            orderBuilder.buildOrder("Eric", buildState -> buildState
-                .item( 3, "Tasse")
-                .item( 3, "Becher")
-                .item( 1, "Kanne")
-            )
-        ).stream()
+                //
+                // Eric's 1st order using buildOrder()
+                orderBuilder.buildOrder("Eric", buildState -> buildState
+                    .item( 4, "Teller")         // + item: 4 Teller, 4x 6.49 €
+                    .item( 8, "Becher")         // + item: 8 Becher, 8x 1.49 €
+                    .item( 1, "SKU-425378")     // + item: 1 Buch "UML", 1x 79.95 €, 7% MwSt (5.23€)
+                    .item( 4, "Tasse")          // + item: 4 Tassen, 4x 2.99 €
+                ),
+                //
+                // build Anne's order by article id's using OrderBuilder's shorter build() method
+                orderBuilder.buildOrder("Anne", buildState -> buildState
+                    .item( 2, "SKU-638035")     // + item Teller by id, 2x 6.49 €
+                    .item( 2, "SKU-458362")     // + item Tasse by id, 2x 2.99 €
+                ),
+                //
+                // build Eric's 2nd order, look up by Eric's id: "892474"
+                orderBuilder.buildOrder("892474", buildState -> buildState
+                    .item(1, "Kanne")
+                ),
+                //
+                // build Nadine's order
+                orderBuilder.buildOrder("Nadine", buildState -> buildState
+                    .item(12, "Teller")
+                    .item( 1, "Buch 'Java'")
+                    .item( 1, "Buch 'UML'")
+                ),
+                //
+                // build Khaled's order
+                orderBuilder.buildOrder("Khaled", buildState -> buildState
+                    .item( 1, "Buch 'Java'")
+                    .item( 1, "Fahrradkarte")
+                ),
+                //
+                // build Eric's 3rd order
+                orderBuilder.buildOrder("Eric", buildState -> buildState
+                    .item( 1, "Fahrradhelm")
+                    .item( 1, "Fahrradkarte")
+                ),
+                //
+                // build Eric's 4th order
+                orderBuilder.buildOrder("Eric", buildState -> buildState
+                    .item( 3, "Tasse")
+                    .item( 3, "Becher")
+                    .item( 1, "Kanne")
+                )
+            ).stream()
             .flatMap(Optional::stream)
             .forEach(order -> orders.put(order.getId(), order));
-        // 
-        // 
+        //
+        //
         // print numbers of objects in collections
         System.out.println(String.format(
             "(%d) Customer objects built.\n" +
-            "(%d) Article objects built.\n" +
-            "(%d) Order objects built.\n---",
+                "(%d) Article objects built.\n" +
+                "(%d) Order objects built.\n---",
             customers.size(), articles.size(), orders.size()));
 
         // print Order table from values of 'orders' map
@@ -197,10 +192,25 @@ public class Application_E12 implements Runtime.Runnable {
                 .filter(o -> ! ids.contains(o.getId()))
                 .toList()
             );
+            //
+            // print Customers
+            StringBuilder sb1 = printer.printCustomers(customers.values());
+            System.out.println(sb1.insert(0, "Kunden:\n").toString());
+            //
+            // print Articles
+            Arrays.stream(PricingCategory.values())
+                .forEach(category -> {
+                    // header: "Artikel (BasePricing, EUR):"
+                    var header = String.format("Artikel (%s, %s):\n", category, category.pricing().currency().code());
+                    StringBuilder sb2 = printer.printArticles(articles.values().stream().toList(), category);
+                    System.out.println(sb2.insert(0, header).toString());
+                });
+            //
+            // print Orders
             // @REMOVE
             // orderList.sort((o1, o2) -> Long.compare(calculateOrderValue(o2), calculateOrderValue(o1)));
             // @/REMOVE
-            StringBuilder sb3 = printOrders(orderList);
+            StringBuilder sb3 = printer.printOrders(orderList);
             System.out.println(sb3.insert(0, "Bestellungen:\n").toString());
         }
         // @REMOVE
@@ -216,15 +226,15 @@ public class Application_E12 implements Runtime.Runnable {
         // ));
         // @/REMOVE
 
-        System.out.println("Application_F12, using components:");
-        //
-        Components components = Components.getInstance();
-        Calculator calculator = components.getCalculator();
-        //
-        long price = 10000L;    // 100.00 EUR
-        long vat = calculator.calculateIncludedVAT(price, 19.0);
-        System.out.println(String.format("19%s enthaltene MwSt. in %d.%02d EUR sind %d.%02d EUR.",
-            "%", price/100, price%100, vat/100, vat%100));
+        // System.out.println("Application_F12, using components:");
+        // //
+        // Components components = Components.getInstance();
+        // Calculator calculator = components.getCalculator();
+        // //
+        // long price = 10000L;    // 100.00 EUR
+        // long vat = calculator.calculateIncludedVAT(price, 19.0);
+        // System.out.println(String.format("19%s enthaltene MwSt. in %d.%02d EUR sind %d.%02d EUR.",
+        //     "%", price/100, price%100, vat/100, vat%100));
     }
 
     /**
@@ -261,101 +271,101 @@ public class Application_E12 implements Runtime.Runnable {
         return article;
     }
 
-    /**
-     * Print objects of class {@link Order} as table row into a {@link StringBuilder}.
-     * @param orders orders to print as row into table
-     * @return StringBuilder with orders rendered in table format
-     * @throws IllegalArgumentException with null arguments
-     */
-    public StringBuilder printOrders(Collection<Order> orders) {
-        if(orders==null)
-            throw new IllegalArgumentException("argument orders: null");
-        //
-        long[] compound = new long[] {0L, 0L};
-        //
-        var it = orders.iterator();
-        var currencyLabel = Optional.ofNullable(it.hasNext()? it.next() : null).map(o -> {
-            var cur = o.getPricing().currency();
-            return cur==Currency.Euro? "" : String.format(" (in %s)", cur.code());
-        }).orElse("");
-        // 
-        // final var tf = new TableFormatter(
-        final var tf = formatter.createTableFormatter(
-                // table column specification
-                "|%-10s|", " %-28s", " %8s", "%1s", " %9s", "| %6s", " %9s|"
-            )
-            .line()     // table header
-            .row("Bestell-ID", String.format("Bestellungen%s", currencyLabel), "MwSt", "*", "Preis", "MwSt", "Gesamt")
-            .line();
-        //
-        // print {@link Order} rows:
-        orders.stream()
-            .forEach(order -> {
-                long orderValue = calculator.calculateOrderValue(order);
-                long orderVAT = calculator.calculateOrderVAT(order);
-                //
-                // print Order as row:
-                printOrder(order, orderValue, orderVAT, tf).line();
-                //
-                // compound order and tax values
-                compound[0] += orderValue;
-                compound[1] += orderVAT;
-            });
-        //
-        tf.row(null, null, null, null, "Gesamt:", formatter.fmtPrice(compound[1], Currency.Euro,0), formatter.fmtPrice(compound[0], Currency.Euro,0));
-        tf.line(null, null, null, null, null, "=", "=");
-        return tf.get();
-    }
+    // /**
+    //  * Print objects of class {@link Order} as table row into a {@link StringBuilder}.
+    //  * @param orders orders to print as row into table
+    //  * @return StringBuilder with orders rendered in table format
+    //  * @throws IllegalArgumentException with null arguments
+    //  */
+    // public StringBuilder printOrders(Collection<Order> orders) {
+    //     if(orders==null)
+    //         throw new IllegalArgumentException("argument orders: null");
+    //     //
+    //     long[] compound = new long[] {0L, 0L};
+    //     //
+    //     var it = orders.iterator();
+    //     var currencyLabel = Optional.ofNullable(it.hasNext()? it.next() : null).map(o -> {
+    //         var cur = o.getPricing().currency();
+    //         return cur==Currency.Euro? "" : String.format(" (in %s)", cur.code());
+    //     }).orElse("");
+    //     //
+    //     // final var tf = new TableFormatter(
+    //     final var tf = formatter.createTableFormatter(
+    //             // table column specification
+    //             "|%-10s|", " %-28s", " %8s", "%1s", " %9s", "| %6s", " %9s|"
+    //         )
+    //         .line()     // table header
+    //         .row("Bestell-ID", String.format("Bestellungen%s", currencyLabel), "MwSt", "*", "Preis", "MwSt", "Gesamt")
+    //         .line();
+    //     //
+    //     // print {@link Order} rows:
+    //     orders.stream()
+    //         .forEach(order -> {
+    //             long orderValue = calculator.calculateOrderValue(order);
+    //             long orderVAT = calculator.calculateOrderVAT(order);
+    //             //
+    //             // print Order as row:
+    //             printOrder(order, orderValue, orderVAT, tf).line();
+    //             //
+    //             // compound order and tax values
+    //             compound[0] += orderValue;
+    //             compound[1] += orderVAT;
+    //         });
+    //     //
+    //     tf.row(null, null, null, null, "Gesamt:", formatter.fmtPrice(compound[1], Currency.Euro), formatter.fmtPrice(compound[0], Currency.Euro));
+    //     tf.line(null, null, null, null, null, "=", "=");
+    //     return tf.get();
+    // }
 
-    /**
-     * Print one {@link Order} object as table row into a {@link TableFormatter}.
-     * @param order order to print
-     * @param orderValue total order value shown in right column
-     * @param orderVAT total order tax shown in right column
-     * @param tf {@link TableFormatter} to format and store table row
-     * @return table formatter with printed row added
-     * @throws IllegalArgumentException with null arguments
-     */
-    TableFormatter printOrder(Order order, long orderValue, long orderVAT, TableFormatter tf) {
-        if(order==null || tf==null)
-            throw new IllegalArgumentException("arguments order or table formatter: null");
-        //
-        var id = Long.valueOf(order.getId()).toString();
-        var pricing = order.getPricing();
-        var currency = pricing.currency();
-        // limit name length so label 'Bestellung' is not cut off
-        var name = String.format("%.11s", order.getCustomer().getFirstName());
-        var brief = name.length() > 6;  // shorten labels for longer names
-        var curLabel = String.format(brief? "(%s)" : "(in %s)", currency.code());
-        var orderLabel = String.format("%s's %s %s:", name, brief? "Best." : "Bestellung", curLabel);
-        //
-        tf.row(id, orderLabel, "", "", "", "", "");   // heading row with order id and name
-        //
-        var it = order.getOrderItems().iterator();
-        for(int i=0; it.hasNext(); i++) {
-            var item = it.next();
-            var article = item.article();
-            var descr = article.getDescription();
-            long unitsOrdered = item.unitsOrdered();
-            long unitPrice = pricing.unitPrice(article);
-            long value = calculator.calculateOrderItemValue(item, pricing);
-            long vat = calculator.calculateOrderItemVAT(item, pricing);
-            var taxRate = pricing.taxRate(article);
-            var reducedTaxMarker = taxRate==TAXRate.Reduced? "*" : "";
-            String itemDescr = String.format(" - %dx %s%s",
-                unitsOrdered, descr, unitsOrdered > 1?
-                    String.format(", %dx %s", unitsOrdered, formatter.fmtPrice(unitPrice, currency,0)) :
-                    String.format("")
-                );
-            String[] totals = i < order.itemsCount() - 1?   // last row?
-                new String[] { "", ""} :
-                new String[] { formatter.fmtPrice(orderVAT, currency,0), formatter.fmtPrice(orderValue, currency,0) };
-            //
-            // item rows with item description, VAT, value and totals in the last row
-            tf.row("", itemDescr, formatter.fmtPrice(vat, currency,0), reducedTaxMarker, formatter.fmtPrice(value, currency,0), totals[0], totals[1]);
-        };
-        return tf;
-    }
+    // /**
+    //  * Print one {@link Order} object as table row into a {@link TableFormatter}.
+    //  * @param order order to print
+    //  * @param orderValue total order value shown in right column
+    //  * @param orderVAT total order tax shown in right column
+    //  * @param tf {@link TableFormatter} to format and store table row
+    //  * @return table formatter with printed row added
+    //  * @throws IllegalArgumentException with null arguments
+    //  */
+    // TableFormatter printOrder(Order order, long orderValue, long orderVAT, TableFormatter tf) {
+    //     if(order==null || tf==null)
+    //         throw new IllegalArgumentException("arguments order or table formatter: null");
+    //     //
+    //     var id = Long.valueOf(order.getId()).toString();
+    //     var pricing = order.getPricing();
+    //     var currency = pricing.currency();
+    //     // limit name length so label 'Bestellung' is not cut off
+    //     var name = String.format("%.11s", order.getCustomer().getFirstName());
+    //     var brief = name.length() > 6;  // shorten labels for longer names
+    //     var curLabel = String.format(brief? "(%s)" : "(in %s)", currency.code());
+    //     var orderLabel = String.format("%s's %s %s:", name, brief? "Best." : "Bestellung", curLabel);
+    //     //
+    //     tf.row(id, orderLabel, "", "", "", "", "");   // heading row with order id and name
+    //     //
+    //     var it = order.getOrderItems().iterator();
+    //     for(int i=0; it.hasNext(); i++) {
+    //         var item = it.next();
+    //         var article = item.article();
+    //         var descr = article.getDescription();
+    //         long unitsOrdered = item.unitsOrdered();
+    //         long unitPrice = pricing.unitPrice(article);
+    //         long value = calculator.calculateOrderItemValue(item, pricing);
+    //         long vat = calculator.calculateOrderItemVAT(item, pricing);
+    //         var taxRate = pricing.taxRate(article);
+    //         var reducedTaxMarker = taxRate==TAXRate.Reduced? "*" : "";
+    //         String itemDescr = String.format(" - %dx %s%s",
+    //             unitsOrdered, descr, unitsOrdered > 1?
+    //                 String.format(", %dx %s", unitsOrdered, formatter.fmtPrice(unitPrice, currency)) :
+    //                 String.format("")
+    //             );
+    //         String[] totals = i < order.itemsCount() - 1?   // last row?
+    //             new String[] { "", ""} :
+    //             new String[] { formatter.fmtPrice(orderVAT, currency), formatter.fmtPrice(orderValue, currency) };
+    //         //
+    //         // item rows with item description, VAT, value and totals in the last row
+    //         tf.row("", itemDescr, formatter.fmtPrice(vat, currency), reducedTaxMarker, formatter.fmtPrice(value, currency), totals[0], totals[1]);
+    //     };
+    //     return tf;
+    // }
 
     // /**
     //  * Calculate a tax included in a gross (<i>"brutto"</i>) value based

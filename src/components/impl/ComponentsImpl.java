@@ -4,34 +4,43 @@ import components.Calculator;
 import components.Components;
 import components.DataFactory;
 import components.Formatter;
+import components.Printer;
 import components.Validator;
 
 public final class ComponentsImpl implements Components {
+    /**
+     * static singleton instance of class {@link Components}
+     */
+    private static final Components instance = new ComponentsImpl();
+
     /**
      * singleton instance of {@link Calculator} implementation class
      */
     private final Calculator calculator;
 
     /**
-     * singleton instance of {@link Calculator} implementation class
+     * singleton instance of {@link DataFactory} implementation class
      */
     private final DataFactory dataFactory;
 
     /**
-     * singleton instance of {@link Calculator} implementation class
+     * singleton instance of {@link Validator} implementation class
      */
     private final Validator validator;
 
+    /**
+     * singleton instance of {@link Formatter} implementation class
+     */
     private final Formatter formatter;
 
     /**
-     * static singleton instance of class {@link ComponentImpl}
+     * static singleton instance of class {@link Components}
      */
-    private static final Components instance = new ComponentsImpl();
+    private final Printer printer;
 
     /**
-     * Getter of {@link Component} implementation class singleton.
-     * @return reference to singleton instance of {@link CalComponent} implementation class
+     * Getter of {@link Components} implementation class singleton.
+     * @return reference to singleton instance of {@link Components} implementation class
      */
     public static Components getInstance() {
         return instance;
@@ -39,20 +48,17 @@ public final class ComponentsImpl implements Components {
 
     /**
      * Private constructor as part of the singleton pattern that creates
-     * singleton instances of {@link Component} implementation classes.
+     * singleton instances of {@link ComponentsImpl} implementation classes.
      */
     private ComponentsImpl() {
         var dataFactory = new DataFactoryImpl();
-        this.calculator = new CalculatorImpl();
         this.dataFactory = dataFactory;
         this.validator = dataFactory;
-        this.formatter = null;
+        this.calculator = new CalculatorImpl();
+        this.formatter = new TableFormatterImpl();
+        this.printer = new PrinterImpl();
     }
 
-    /**
-     * Getter of {@link Calculator} component implementation class singleton.
-     * @return reference to singleton instance of {@link Calculator} implementation class
-     */
     public Calculator getCalculator() {
         return calculator;
     }
@@ -71,4 +77,9 @@ public final class ComponentsImpl implements Components {
 	public Formatter getFormatter() {
 		return formatter;
 	}
+
+    @Override
+    public Printer getPrinter() {
+        return printer;
+    }
 }

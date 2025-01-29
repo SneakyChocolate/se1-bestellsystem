@@ -37,6 +37,12 @@ public interface Components {
      * @return reference to singleton instance of {@link Formatter} implementation class
      */
 	public Formatter getFormatter();
+
+	/**
+	 * Getter of {@link Printer} component implementation class singleton.
+	 * @return reference to singleton instance of {@link Printer} implementation class
+	 */
+	public Printer getPrinter();
 }
 
 

@@ -9,7 +9,7 @@ import datamodel.Pricing;
  * Non-public implementation class of {@link Calculator} interface of a
  * system component that performs price and VAT tax calculations.
  */
-class CalculatorImpl implements Calculator {
+final class CalculatorImpl implements Calculator {
     /**
      * Calculate a tax included in a gross (<i>"brutto"</i>) value based
      * on a given tax rate.

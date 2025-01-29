@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 
-public class TableFormatterImpl implements TableFormatter,Formatter {
+final public class TableFormatterImpl implements TableFormatter, Formatter {
     /**
      * Format specifiers for each column.
      */
@@ -303,17 +303,7 @@ public class TableFormatterImpl implements TableFormatter,Formatter {
     }
 
     @Override
-    public String fmtPrice(long price, Pricing.Currency currency, int style) {
-        return "";
-    }
-
-    @Override
-    public String fmtDecimal(long value, int decimalDigits, int unit) {
-        return "";
-    }
-
-    @Override
     public TableFormatter createTableFormatter(String... columnSpecs) {
-        return null;
+        return new TableFormatterImpl(columnSpecs);
     }
 }

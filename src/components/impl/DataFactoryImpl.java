@@ -23,7 +23,7 @@ import datamodel.ProtectedFactory;
 /**
  * DataFactory
  */
-class DataFactoryImpl implements DataFactory, Validator {
+final class DataFactoryImpl implements DataFactory, Validator {
     /**
      * Creator functions injected by {@link ProtectedFactory}
      */
